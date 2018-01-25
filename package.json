@@ -2,7 +2,7 @@
   "name": "crorm",
   "version": "1.0.0",
   "description": "Catch&Release ORM",
-  "main": "orm.js",
+  "main": "lib/orm.js",
   "scripts": {
     "build": "babel src -d lib",
     "test": "jest test/*.test.js && npm run lint",
