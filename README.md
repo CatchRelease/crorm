@@ -20,6 +20,8 @@ Catch&Release ORM is a heavily opinionated React/Redux ORM
 ##### Class Methods
 `database()` - Get the Redux Store.
 
+`dispatch()` - Get the Redux Store dispatch function.
+
 `entityType()` - Get the entityType as a lowercase string. In our example this will be 'animal'.
 
 `order()` - Get an Array of ids containing the server ordering for the current entityType.
@@ -54,10 +56,10 @@ Catch&Release ORM is a heavily opinionated React/Redux ORM
 
 `destroy()` - Marks the current instance as destroyed. Calls an onDestroy to be overridden to save on the backend and update the store.
 
-`onCreate()` - Override to define what happens on create.
+`onCreate(instance, props, dispatch)` - Override to define what happens on create.
 
-`onSave()` - Override to define what happens on save.
+`onSave(instance, dispatch)` - Override to define what happens on save.
 
-`onUpdate()` - Override to define what happens on update.
+`onUpdate(instance, props, dispatch)` - Override to define what happens on update.
 
-`onDestroy()` - Override to define what happens on destroy.
+`onDestroy(instance, dispatch)` - Override to define what happens on destroy.

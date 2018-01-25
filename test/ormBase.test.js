@@ -16,19 +16,19 @@ class Shot extends ORM.Base {
     return !!this.projectId;
   }
 
-  onCreate(shot, attributes)  {
+  onCreate(shot, attributes, dispatch)  {
     onCreateSpy(shot, attributes);
   }
 
-  onSave(shot)  {
+  onSave(shot, dispatch)  {
     onSaveSpy(shot);
   }
 
-  onUpdate(shot, attributes)  {
+  onUpdate(shot, attributes, dispatch)  {
     onUpdateSpy(shot, attributes);
   }
 
-  onDestroy(shot) {
+  onDestroy(shot, dispatch) {
     onDestroySpy(shot);
   }
 }
@@ -56,6 +56,16 @@ describe('Base Class', () => {
 
       test('data is the store state', () => {
         expect(ORM.Base.database().data).toEqual(store.getState().data);
+      });
+    });
+
+    describe('dispatch', () => {
+      test('returns a function', () => {
+        expect(ORM.Base.dispatch()).toBeInstanceOf(Function);
+      });
+
+      test('returns the stores dispatch method', () => {
+        expect(ORM.Base.dispatch()).toBe(store.dispatch);
       });
     });
 
@@ -252,28 +262,48 @@ describe('Inherited Shot Class', () => {
     });
 
     describe('create', () => {
+      let shot;
+
       describe('with attributes', () => {
-        let shot;
+        let attributes;
 
         beforeEach(() => {
-          shot = Shot.create({ projectId: 5 });
+          onCreateSpy.mockReset();
+
+          attributes = { projectId: 5 };
+          shot = Shot.create(attributes);
         });
 
         test('creates a Shot', () => {
           expect(shot).toBeInstanceOf(Shot);
         });
-
 
         test('sets the attribute', () => {
           expect(shot.projectId).toEqual(5);
         });
+
+        test('calls the onCreate method', () => {
+          expect(onCreateSpy).toHaveBeenCalledTimes(1);
+          expect(onCreateSpy.mock.calls[0][0]).toBe(shot);
+          expect(onCreateSpy.mock.calls[0][1]).toBe(attributes);
+        });
       });
 
       describe('without attributes', () => {
-        test('creates a Shot', () => {
-          const shot = Shot.create();
+        beforeEach(() => {
+          onCreateSpy.mockReset();
 
+          shot = Shot.create();
+        });
+
+        test('creates a Shot', () => {
           expect(shot).toBeInstanceOf(Shot);
+        });
+
+        test('calls the onCreate method', () => {
+          expect(onCreateSpy).toHaveBeenCalledTimes(1);
+          expect(onCreateSpy.mock.calls[0][0]).toBe(shot);
+          expect(onCreateSpy.mock.calls[0][1]).toEqual({});
         });
       });
     });
@@ -502,7 +532,7 @@ describe('Inherited Shot Class', () => {
         test('calls the onUpdate method', () => {
           expect(onUpdateSpy).toHaveBeenCalledTimes(1);
           expect(onUpdateSpy.mock.calls[0][0]).toBe(shot);
-          expect(onUpdateSpy.mock.calls[0][1]).toBe(updateProps);
+          expect(onUpdateSpy.mock.calls[0][1]).toEqual(updateProps);
         });
 
         test('returns true', () => {

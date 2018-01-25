@@ -69,6 +69,10 @@ export class ORMBase {
     return ORM.Config.database.getState();
   }
 
+  static dispatch() {
+    return ORM.Config.database.dispatch;
+  }
+
   static entityType() {
     return this.name.toLowerCase();
   }
@@ -156,9 +160,11 @@ export class ORMBase {
     return results;
   }
 
-  static create(attributes) {
+  static create(attributes = {}) {
     const model = new this(new Immutable.Map(Object.assign({}, attributes)));
-    model.onCreate(this, attributes);
+    const dispatch = ORMBase.dispatch();
+
+    model.onCreate(model, attributes, dispatch);
 
     return model;
   }
@@ -217,7 +223,7 @@ export class ORMBase {
 
     if (this.valid()) {
       this._changed = {};
-      this.onSave(this);
+      this.onSave(this, ORMBase.dispatch());
 
       saved = true;
     } else {
@@ -227,13 +233,13 @@ export class ORMBase {
     return saved;
   }
 
-  update(props) {
+  update(props = {}) {
     const updateProps = Object.assign({}, props);
     this.entity = this.entity.merge(updateProps);
     let updated;
 
     if (this.valid()) {
-      this.onUpdate(this, props);
+      this.onUpdate(this, updateProps, ORMBase.dispatch());
       this._changed = {};
 
       updated = true;
@@ -248,7 +254,7 @@ export class ORMBase {
     this._destroyed = true;
     this.removeListener();
 
-    this.onDestroy(this);
+    this.onDestroy(this, ORMBase.dispatch());
   }
 
   onCreate() {
