@@ -10,7 +10,6 @@ import {
 } from './ormSelectors';
 
 import ORM from '../orm';
-import { DatabaseException } from './ormExceptions';
 
 export class ORMBase {
   constructor(data = null) {
@@ -67,7 +66,7 @@ export class ORMBase {
   }
 
   static database() {
-    return { data: ORM.Config.database.getState() };
+    return ORM.Config.database.getState();
   }
 
   static entityType() {
@@ -119,12 +118,13 @@ export class ORMBase {
   static find(id) {
     const entityType = this.entityType();
     const entity = selectEntity(ORMBase.database(), { entityType, id });
+    let returnValue = null;
 
-    if (entity[entityType].isEmpty()) {
-      throw new DatabaseException('Record not found.');
+    if (!entity[entityType].isEmpty()) {
+      returnValue = new this(entity[entityType]);
     }
 
-    return new this(entity[entityType]);
+    return returnValue;
   }
 
   static all() {

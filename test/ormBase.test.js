@@ -1,7 +1,6 @@
 import Immutable from 'immutable';
 import ORM from '../src/orm';
 import { store, updateShot } from './createStore';
-import { DatabaseException } from '../src/orm/ormExceptions';
 
 const { spyOn } = jest;
 
@@ -56,7 +55,7 @@ describe('Base Class', () => {
       });
 
       test('data is the store state', () => {
-        expect(ORM.Base.database().data).toEqual(store.getState());
+        expect(ORM.Base.database().data).toEqual(store.getState().data);
       });
     });
 
@@ -188,10 +187,8 @@ describe('Inherited Shot Class', () => {
       });
 
       describe('not found', () => {
-        test('throws an error', () => {
-          expect(() => {
-            Shot.find(9999)
-          }).toThrow(DatabaseException);
+        test('returns null', () => {
+          expect(Shot.find(9999)).toBeNull();
         });
       });
     });

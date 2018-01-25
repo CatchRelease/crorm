@@ -1,5 +1,5 @@
 import Immutable from 'immutable';
-import { createStore } from 'redux'
+import { createStore, combineReducers } from 'redux'
 
 // Setup Redux Store
 export const initialState = Immutable.fromJS({
@@ -57,4 +57,11 @@ function reducer(state = initialState, action) {
   }
 }
 
-export const store = createStore(reducer);
+const finalReducer = combineReducers({
+  ...{
+    data: reducer
+  }
+});
+
+
+export const store = createStore(finalReducer);
