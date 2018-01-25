@@ -1,0 +1,38 @@
+{
+  "name": "crorm",
+  "version": "1.0.0",
+  "description": "Catch&Release ORM",
+  "main": "orm.js",
+  "scripts": {
+    "build": "babel src -d lib",
+    "test": "jest test/*.test.js && npm run lint",
+    "lint": "eslint src"
+  },
+  "keywords": [
+    "catchandrelease",
+    "orm"
+  ],
+  "author": "Michael Carey",
+  "license": "ISC",
+  "private": false,
+  "dependencies": {
+    "immutable": "^3.8.2",
+    "pluralize": "^7.0.0",
+    "reselect": "^3.0.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.1",
+    "babel-jest": "^22.1.0",
+    "babel-preset-env": "^1.6.1",
+    "eslint": "^4.16.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.5.1",
+    "jest": "^22.1.4",
+    "redux": "^3.7.2",
+    "regenerator-runtime": "^0.11.1"
+  }
+}

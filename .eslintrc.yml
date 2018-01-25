@@ -1,0 +1,61 @@
+---
+parser: babel-eslint
+
+extends: eslint-config-airbnb
+
+#settings:
+#  import/resolver:
+#    node:
+#      paths:
+#        - app/javascript
+#        - spec/javascript
+#        - app/assets/stylesheets
+
+globals:
+  jest: true
+  expect: true
+  spyOn: true
+
+env:
+  browser: true
+  node: true
+  jest: true
+
+rules:
+  comma-dangle: 0
+  object-curly-spacing: [2, "always"]
+  no-alert: 0
+  arrow-parens: 0
+  no-unused-expressions: 0
+  no-fallthrough: 1
+  function-paren-newline: 0
+  object-curly-newline: 0
+  no-underscore-dangle: 0
+  no-param-reassign: 0
+
+  ### imports
+  import/no-extraneous-dependencies: [2, {"devDependencies": true, "optionalDependencies": false, "peerDependencies": false}]
+  import/prefer-default-export: 0
+  import/extensions: [2, "never", { "json": "always" }]
+  import/no-named-as-default: 0
+  import/no-named-as-default-member: 0
+
+  #### jsx-accessibility
+  jsx-a11y/label-has-for: 0
+  jsx-a11y/no-static-element-interactions: 0 # this is failing to detect that a tags are interactive elements
+  jsx-a11y/href-no-hash: 0
+  jsx-a11y/anchor-has-content: 0
+  jsx-a11y/no-autofocus: 0
+  jsx-a11y/media-has-caption: 0
+  jsx-a11y/anchor-is-valid: 0 # We should probably find a way to turn this one back on
+  jsx-a11y/click-events-have-key-events: 0
+
+  ### Variables
+  no-undef: 2
+  no-unused-vars: [2, { vars: all, args: none }]
+
+  ### Stylistic issues
+  indent: [1, 2, { SwitchCase: 1, VariableDeclarator: 2 }]
+  id-length: [1, { min: 2, exceptions: [_, e, i, k, v, q] }]
+  space-before-function-paren: [1, "never"]
+  max-len: [2, 180, 2]
