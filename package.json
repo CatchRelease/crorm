@@ -8,13 +8,19 @@
     "test": "jest test/*.test.js && npm run lint",
     "lint": "eslint src"
   },
+  "repository": {
+    "type": "git",
+    "url": "CatchRelease/crorm"
+  },
   "keywords": [
     "catchandrelease",
-    "orm"
+    "orm",
+    "react",
+    "redux"
   ],
   "author": "Michael Carey",
   "license": "ISC",
-  "private": false,
+  "private": true,
   "dependencies": {
     "immutable": "^3.8.2",
     "pluralize": "^7.0.0",
