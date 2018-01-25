@@ -5,6 +5,7 @@ Catch&Release ORM is a heavily opinionated React/Redux ORM
 * Data is in the JSONAPI format
 * Data has been parsed using jsonapi-normalizer
 * Actions are all CRUD based
+* Redux Store should have a { data } reducer via combinedReducers. 
 
 #### Setting Up
 `import { ORM } from 'crorm';`
@@ -17,7 +18,7 @@ Catch&Release ORM is a heavily opinionated React/Redux ORM
 `class Animal extends ORM.Base {};`
 
 ##### Class Methods
-`database()` - Get the Redux Store, in { data: state } format.
+`database()` - Get the Redux Store.
 
 `entityType()` - Get the entityType as a lowercase string. In our example this will be 'animal'.
 
@@ -31,7 +32,7 @@ Catch&Release ORM is a heavily opinionated React/Redux ORM
 
 `pagination(true)` - Get an Immutable of the pagination for the current entityType in { pagination: Immutable.Map } format.
 
-`find(id)` - Get the instance matching the id for the entityType.
+`find(id)` - Get the instance matching the id for the entityType. Returns null on not found.
 
 `all()` - Get instances for all entities of entityType.
 
