@@ -24,6 +24,9 @@ export class ORMBase {
     if (data) {
       this.entity = data;
       this.id = data.get('id');
+    } else {
+      this.entity = Immutable.Map();
+      this.id = null;
     }
 
     this.addListener();
@@ -122,7 +125,7 @@ export class ORMBase {
   static find(id) {
     const entityType = this.entityType();
     const entity = selectEntity(ORMBase.database(), { entityType, id });
-    let returnValue = null;
+    let returnValue = new this();
 
     if (!entity[entityType].isEmpty()) {
       returnValue = new this(entity[entityType]);
@@ -223,7 +226,8 @@ export class ORMBase {
 
     if (this.valid()) {
       this._changed = {};
-      this.onSave(this, ORMBase.dispatch());
+      console.log('entity', this.entity.toJS());
+      this.onSave(this, this.entity.toJS(), ORMBase.dispatch());
 
       saved = true;
     } else {

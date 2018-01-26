@@ -131,7 +131,7 @@ export class HeroCard extends React.Component {
 
 `pagination(true)` - Get an Immutable of the pagination for the current entityType in { pagination: Immutable.Map } format.
 
-`find(id)` - Get the instance matching the id for the entityType. Returns null on not found.
+`find(id)` - Get the instance matching the id for the entityType. Returns instance with empty Immutable.Map() when not found.
 
 `all()` - Get instances for all entities of entityType.
 
@@ -153,10 +153,10 @@ export class HeroCard extends React.Component {
 
 `destroy()` - Marks the current instance as destroyed. Calls an onDestroy to be overridden to save on the backend and update the store.
 
-`onCreate(instance, props, dispatch)` - Override to define what happens on create.
+`onCreate(instance, createProps, dispatch)` - Override to define what happens on create.
 
-`onSave(instance, dispatch)` - Override to define what happens on save.
+`onSave(instance, allProps, dispatch)` - Override to define what happens on save.
 
-`onUpdate(instance, props, dispatch)` - Override to define what happens on update.
+`onUpdate(instance, updateProps, dispatch)` - Override to define what happens on update.
 
 `onDestroy(instance, dispatch)` - Override to define what happens on destroy.
