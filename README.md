@@ -36,7 +36,7 @@ export class HeroCard extends React.Component {
     return (
       <Fragment>
         <button onClick={destroyHero(heroId)}>Destroy Hero</button>
-        <HeroCard {...{ hero }} />
+        <HeroAvatar {...{ hero }} />
         <HeroDetails {...{ hero }} />
       </Fragment>
     ); 
@@ -88,7 +88,7 @@ export class HeroCard extends React.Component {
     return (
       <Fragment>
         <button onClick={hero.destroy()}>Destroy Hero</button>
-        <HeroCard {...{ hero }} />
+        <HeroAvatar {...{ hero }} />
         <HeroDetails {...{ hero }} />
       </Fragment>
     ); 
