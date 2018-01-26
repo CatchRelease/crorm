@@ -44,6 +44,9 @@ var ORMBase = exports.ORMBase = function () {
     if (data) {
       this.entity = data;
       this.id = data.get('id');
+    } else {
+      this.entity = new _immutable2.default.Map();
+      this.id = null;
     }
 
     this.addListener();
@@ -150,7 +153,7 @@ var ORMBase = exports.ORMBase = function () {
 
       if (this.valid()) {
         this._changed = {};
-        this.onSave(this, ORMBase.dispatch());
+        this.onSave(this, this.entity.toJS(), ORMBase.dispatch());
 
         saved = true;
       } else {
@@ -278,7 +281,7 @@ var ORMBase = exports.ORMBase = function () {
     value: function find(id) {
       var entityType = this.entityType();
       var entity = (0, _ormSelectors.selectEntity)(ORMBase.database(), { entityType: entityType, id: id });
-      var returnValue = null;
+      var returnValue = new this();
 
       if (!entity[entityType].isEmpty()) {
         returnValue = new this(entity[entityType]);
