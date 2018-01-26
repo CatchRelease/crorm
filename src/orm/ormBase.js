@@ -25,7 +25,7 @@ export class ORMBase {
       this.entity = data;
       this.id = data.get('id');
     } else {
-      this.entity = Immutable.Map();
+      this.entity = new Immutable.Map();
       this.id = null;
     }
 
@@ -226,7 +226,6 @@ export class ORMBase {
 
     if (this.valid()) {
       this._changed = {};
-      console.log('entity', this.entity.toJS());
       this.onSave(this, this.entity.toJS(), ORMBase.dispatch());
 
       saved = true;
