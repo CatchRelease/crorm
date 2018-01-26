@@ -1,7 +1,88 @@
 # Catch&Release ORM
 Catch&Release ORM is a heavily opinionated React/Redux ORM
 
+#### Why an ORM?
+The ORM should remove boilerplate, simplify immutable access, and get rid of the need to connect() your components.
+
+Example:
+
+Old style:
+```jsx
+import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
+import ImmutablePropTypes from 'react-immutable-proptypes';
+
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+import { actions } from 'heroActions';
+import { selectHero } from 'heroSelectors';
+
+import HeroAvatar from 'heroAvatar';
+import HeroDetails from 'heroDetails';
+
+export class HeroCard extends React.Component {
+  static propTypes = {
+    heroId: PropTypes.number.isRequired,
+    hero: ImmutablePropTypes.Map.isRequired,
+    destroyHero: PropTypes.func.isRequired
+  }
+  
+  render() {
+    const { hero, destroyHero } = this.props;
+    
+    return (
+      <Fragment>
+        <button onClick={destroyHero()}
+        <HeroCard {...{ hero }} />
+        <HeroDetails {...{ hero }} />
+      </Fragment>
+    ); 
+  }
+} 
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    destroyHero: actions.destroyHero
+  }, dispatch);
+}
+
+export default connect(selectHero, mapDispatchToProps)(HeroCard);
+```
+
+New Style (after defining your reusable model): 
+```jsx
+import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
+
+import Hero from 'hero';
+
+import HeroAvatar from 'heroAvatar';
+import HeroDetails from 'heroDetails';
+
+export class HeroCard extends React.Component {
+  static propTypes = {
+    heroId: PropTypes.number.isRequired
+  }
+  
+  render() {
+    const { heroId } = this.props;    
+    const hero = Hero.find(heroId);
+    
+    return (
+      <Fragment>
+        <button onClick={hero.destroy()}
+        <HeroCard {...{ hero }} />
+        <HeroDetails {...{ hero }} />
+      </Fragment>
+    ); 
+  }
+} 
+```
+
+
 #### Expectations
+* Redux data is Immutable
 * Data is in the JSONAPI format
 * Data has been parsed using jsonapi-normalizer
 * Actions are all CRUD based
