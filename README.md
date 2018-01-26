@@ -6,8 +6,10 @@ The ORM should remove boilerplate, simplify immutable access, and get rid of the
 
 Example:
 
-Old style:
+**Old style:**
 ```jsx
+// HeroCard.jsx
+
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import ImmutablePropTypes from 'react-immutable-proptypes';
@@ -29,11 +31,11 @@ export class HeroCard extends React.Component {
   }
   
   render() {
-    const { hero, destroyHero } = this.props;
+    const { heroId, hero, destroyHero } = this.props;
     
     return (
       <Fragment>
-        <button onClick={destroyHero()}
+        <button onClick={destroyHero(heroId)}
         <HeroCard {...{ hero }} />
         <HeroDetails {...{ hero }} />
       </Fragment>
@@ -50,8 +52,22 @@ function mapDispatchToProps(dispatch) {
 export default connect(selectHero, mapDispatchToProps)(HeroCard);
 ```
 
-New Style (after defining your reusable model): 
+**New Style:**
 ```jsx
+// Hero.js
+
+import { actions } from 'heroActions';
+
+export class Hero extends ORM.Base {
+  onDestroy(hero, dispatch) {
+    dispatch(actions.destroyHero(hero.id));
+  }
+}
+```
+
+```jsx
+// HeroCard.jsx
+
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 
