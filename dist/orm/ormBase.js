@@ -42,8 +42,10 @@ var ORMBase = exports.ORMBase = function () {
     this._destroyed = false;
 
     if (data) {
-      this.entity = data;
-      this.id = data.get('id');
+      var immutableData = _immutable2.default.Iterable.isIterable(data) ? data : _immutable2.default.fromJS(data);
+
+      this.entity = immutableData;
+      this.id = immutableData.getIn(['id'], '').toString();
     } else {
       this.entity = new _immutable2.default.Map();
       this.id = null;
@@ -283,9 +285,11 @@ var ORMBase = exports.ORMBase = function () {
     }
   }, {
     key: 'find',
-    value: function find(id) {
+    value: function find() {
+      var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
       var entityType = this.entityType();
-      var entity = (0, _ormSelectors.selectEntity)(ORMBase.database(), { entityType: entityType, id: id });
+      var entity = (0, _ormSelectors.selectEntity)(ORMBase.database(), { entityType: entityType, id: id.toString() });
       var returnValue = new this();
 
       if (!entity[entityType].isEmpty()) {

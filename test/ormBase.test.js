@@ -125,6 +125,60 @@ describe('Inherited Shot Class', () => {
   });
 
   describe('Class Methods', () => {
+    describe('constructor', () => {
+      describe('has data', () => {
+        let shot;
+
+        describe('hash', () => {
+          beforeEach(() => {
+            shot = new Shot({ id: '22' });
+          });
+
+          test('sets the id', () => {
+            expect(shot.id).toBe('22');
+          });
+        });
+
+        describe('immutable', () => {
+          beforeEach(() => {
+            shot = new Shot(Immutable.fromJS({ id: '22' }));
+          });
+
+          test('sets the id', () => {
+            expect(shot.id).toBe('22');
+          });
+        });
+      });
+
+      describe('no data', () => {
+        let shot;
+
+        beforeEach(() => {
+          shot = new Shot();
+        });
+
+        test('returns an instance', () => {
+          expect(shot).toBeInstanceOf(Shot);
+        });
+
+        test('id is null', () => {
+          expect(shot.id).toBeNull();
+        });
+
+        test('has empty changed', () => {
+          expect(shot._changed).toEqual({});
+        });
+
+        test('_dirty false', () => {
+          expect(shot._dirty).toBeFalsy();
+        });
+
+        test('_destroyed false', () => {
+          expect(shot._destroyed).toBeFalsy();
+        });
+      });
+    });
+
     describe('entityType', () => {
       test('returns the lowercase inherited class name', () => {
         expect(Shot.entityType()).toEqual('shot');

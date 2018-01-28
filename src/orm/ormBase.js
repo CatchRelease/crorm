@@ -22,8 +22,10 @@ export class ORMBase {
     this._destroyed = false;
 
     if (data) {
-      this.entity = data;
-      this.id = data.get('id');
+      const immutableData = Immutable.Iterable.isIterable(data) ? data : Immutable.fromJS(data);
+
+      this.entity = immutableData;
+      this.id = immutableData.getIn(['id'], '').toString();
     } else {
       this.entity = new Immutable.Map();
       this.id = null;
@@ -122,9 +124,9 @@ export class ORMBase {
     return returnValue;
   }
 
-  static find(id) {
+  static find(id = '') {
     const entityType = this.entityType();
-    const entity = selectEntity(ORMBase.database(), { entityType, id });
+    const entity = selectEntity(ORMBase.database(), { entityType, id: id.toString() });
     let returnValue = new this();
 
     if (!entity[entityType].isEmpty()) {
