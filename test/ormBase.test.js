@@ -481,8 +481,9 @@ describe('Inherited Shot Class', () => {
           expect(shot._changed).toEqual({})
         });
 
-        test('returns true', () => {
-          expect(saveResult).toBeTruthy();
+        test('returns a different instance', () => {
+          expect(saveResult).toBeInstanceOf(Shot);
+          expect(saveResult).not.toBe(shot);
         });
       });
 
@@ -510,8 +511,9 @@ describe('Inherited Shot Class', () => {
           });
         });
 
-        test('returns false', () => {
-          expect(saveResult).toBeFalsy();
+        test('returns the same instance', () => {
+          expect(saveResult).toBeInstanceOf(Shot);
+          expect(saveResult).toBe(invalidShot);
         });
       });
     });
@@ -534,8 +536,9 @@ describe('Inherited Shot Class', () => {
           expect(onUpdateSpy.mock.calls[0][1]).toEqual(updateProps);
         });
 
-        test('returns true', () => {
-          expect(updateResult).toBeTruthy();
+        test('returns a different instance', () => {
+          expect(updateResult).toBeInstanceOf(Shot);
+          expect(updateResult).not.toBe(shot);
         });
       });
 
@@ -554,8 +557,9 @@ describe('Inherited Shot Class', () => {
           expect(onUpdateSpy).toHaveBeenCalledTimes(0);
         });
 
-        test('returns false', () => {
-          expect(updateResult).toBeFalsy();
+        test('returns the same instance', () => {
+          expect(updateResult).toBeInstanceOf(Shot);
+          expect(updateResult).toBe(invalidShot);
         });
       });
     });
@@ -563,13 +567,14 @@ describe('Inherited Shot Class', () => {
     describe('destroy', () => {
       let destroyedShot;
       let removeListenerSpy;
+      let destroyedShotResult;
 
       beforeEach(() => {
         onDestroySpy.mockReset();
         destroyedShot = Shot.create({ projectId: 55 });
 
         removeListenerSpy = spyOn(destroyedShot, 'removeListener');
-        destroyedShot.destroy();
+        destroyedShotResult = destroyedShot.destroy();
       });
 
       test('sets the destroyed prop to true', () => {
@@ -583,6 +588,11 @@ describe('Inherited Shot Class', () => {
       test('calls the onDestroy method', () => {
         expect(onDestroySpy).toHaveBeenCalledTimes(1);
         expect(onDestroySpy.mock.calls[0][0]).toBe(destroyedShot);
+      });
+
+      test('returns a different instance', () => {
+        expect(destroyedShotResult).toBeInstanceOf(Shot);
+        expect(destroyedShotResult).not.toBe(destroyedShot);
       });
     });
   });

@@ -85,6 +85,15 @@ var ORMBase = exports.ORMBase = function () {
   }
 
   _createClass(ORMBase, [{
+    key: '_clone',
+    value: function _clone() {
+      var clone = new this.constructor(this.entity);
+      clone._dirty = this._dirty;
+      clone._destroyed = this._destroyed;
+
+      return clone;
+    }
+  }, {
     key: 'entityType',
     value: function entityType() {
       return this.constructor.name.toLowerCase();
@@ -149,18 +158,16 @@ var ORMBase = exports.ORMBase = function () {
   }, {
     key: 'save',
     value: function save() {
-      var saved = void 0;
+      var returnInstance = this;
 
       if (this.valid()) {
         this._changed = {};
         this.onSave(this, this.entity.toJS(), ORMBase.dispatch());
 
-        saved = true;
-      } else {
-        saved = false;
+        returnInstance = this._clone();
       }
 
-      return saved;
+      return returnInstance;
     }
   }, {
     key: 'update',
@@ -168,19 +175,15 @@ var ORMBase = exports.ORMBase = function () {
       var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       var updateProps = Object.assign({}, props);
-      this.entity = this.entity.merge(updateProps);
-      var updated = void 0;
+      var returnInstance = this;
 
       if (this.valid()) {
+        this.entity = this.entity.merge(updateProps);
         this.onUpdate(this, updateProps, ORMBase.dispatch());
-        this._changed = {};
-
-        updated = true;
-      } else {
-        updated = false;
+        returnInstance = this._clone();
       }
 
-      return updated;
+      return returnInstance;
     }
   }, {
     key: 'destroy',
@@ -189,6 +192,8 @@ var ORMBase = exports.ORMBase = function () {
       this.removeListener();
 
       this.onDestroy(this, ORMBase.dispatch());
+
+      return this._clone();
     }
   }, {
     key: 'onCreate',

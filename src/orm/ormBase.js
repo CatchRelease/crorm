@@ -172,6 +172,14 @@ export class ORMBase {
     return model;
   }
 
+  _clone() {
+    const clone = new this.constructor(this.entity);
+    clone._dirty = this._dirty;
+    clone._destroyed = this._destroyed;
+
+    return clone;
+  }
+
   entityType() {
     return this.constructor.name.toLowerCase();
   }
@@ -222,35 +230,29 @@ export class ORMBase {
   }
 
   save() {
-    let saved;
+    let returnInstance = this;
 
     if (this.valid()) {
       this._changed = {};
       this.onSave(this, this.entity.toJS(), ORMBase.dispatch());
 
-      saved = true;
-    } else {
-      saved = false;
+      returnInstance = this._clone();
     }
 
-    return saved;
+    return returnInstance;
   }
 
   update(props = {}) {
     const updateProps = Object.assign({}, props);
-    this.entity = this.entity.merge(updateProps);
-    let updated;
+    let returnInstance = this;
 
     if (this.valid()) {
+      this.entity = this.entity.merge(updateProps);
       this.onUpdate(this, updateProps, ORMBase.dispatch());
-      this._changed = {};
-
-      updated = true;
-    } else {
-      updated = false;
+      returnInstance = this._clone();
     }
 
-    return updated;
+    return returnInstance;
   }
 
   destroy() {
@@ -258,6 +260,8 @@ export class ORMBase {
     this.removeListener();
 
     this.onDestroy(this, ORMBase.dispatch());
+
+    return this._clone();
   }
 
   onCreate() {

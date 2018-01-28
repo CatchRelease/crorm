@@ -147,11 +147,11 @@ export class HeroCard extends React.Component {
 
 `changes()` - Returns the current changeset in the format `{ changedKey: { newValue, oldValue } }`.
 
-`save()` - Saves the current instance. Calls an onSave to be overridden to save on the backend and update the store.
+`save()` - Saves the current values and returns a new instance. Calls an onSave to be overridden to save on the backend and update the store.
 
-`update(props = {})` - Update the current instance with the passed in props. Calls an onUpdate to be overridden to save on the backend and update the store.
+`update(props = {})` - Update the current values and returns a new instance with the passed in props. Calls an onUpdate to be overridden to save on the backend and update the store.
 
-`destroy()` - Marks the current instance as destroyed. Calls an onDestroy to be overridden to save on the backend and update the store.
+`destroy()` - Marks the current model as destroyed and returns a "destroyed" instance. Calls an onDestroy to be overridden to save on the backend and update the store.
 
 `onCreate(instance, createProps, dispatch)` - Override to define what happens on create.
 
