@@ -11,17 +11,16 @@ const onSaveSpy = jest.fn();
 const onUpdateSpy = jest.fn();
 const onDestroySpy = jest.fn();
 
-class Shot extends ORM.Base {
+class Shot extends ORM.Base({
+  id: null,
+  projectId: null
+}) {
   valid() {
     return !!this.projectId;
   }
 
   onCreate(shot, attributes, dispatch)  {
     onCreateSpy(shot, attributes);
-  }
-
-  onSave(shot, dispatch)  {
-    onSaveSpy(shot);
   }
 
   onUpdate(shot, attributes, dispatch)  {
@@ -48,73 +47,73 @@ describe('ORMBase', () => {
     describe('Class Methods', () => {
       describe('database', () => {
         test('returns an object', () => {
-          expect(ORM.Base.database()).toBeInstanceOf(Object);
+          expect(Shot.database()).toBeInstanceOf(Object);
         });
 
         test('has a data member', () => {
-          expect(ORM.Base.database().data).toBeDefined();
+          expect(Shot.database().data).toBeDefined();
         });
 
         test('data is the store state', () => {
-          expect(ORM.Base.database().data).toEqual(store.getState().data);
+          expect(Shot.database().data).toEqual(store.getState().data);
         });
       });
 
       describe('dispatch', () => {
         test('returns a function', () => {
-          expect(ORM.Base.dispatch()).toBeInstanceOf(Function);
+          expect(Shot.dispatch()).toBeInstanceOf(Function);
         });
 
         test('returns the stores dispatch method', () => {
-          expect(ORM.Base.dispatch()).toBe(store.dispatch);
+          expect(Shot.dispatch()).toBe(store.dispatch);
         });
       });
 
       describe('entityType', () => {
         test('returns lowercase class name', () => {
-          expect(ORM.Base.entityType()).toEqual('ormbase');
+          expect(Shot.entityType()).toEqual('shot');
         });
       });
 
       describe('order', () => {
         test('method exists', () => {
-          expect(ORM.Base.order).toBeDefined();
+          expect(Shot.order).toBeDefined();
         });
       });
 
       describe('ordered', () => {
         test('method exists', () => {
-          expect(ORM.Base.ordered).toBeDefined();
+          expect(Shot.ordered).toBeDefined();
         });
       });
 
       describe('pagination', () => {
         test('method exists', () => {
-          expect(ORM.Base.pagination).toBeDefined();
+          expect(Shot.pagination).toBeDefined();
         });
       });
 
       describe('find', () => {
         test('method exists', () => {
-          expect(ORM.Base.find).toBeDefined();
+          expect(Shot.find).toBeDefined();
         });
       });
 
       describe('all', () => {
         test('method exists', () => {
-          expect(ORM.Base.all).toBeDefined();
+          expect(Shot.all).toBeDefined();
         });
       });
 
       describe('where', () => {
         test('method exists', () => {
-          expect(ORM.Base.where).toBeDefined();
+          expect(Shot.where).toBeDefined();
         });
       });
 
       describe('create', () => {
         test('method exists', () => {
-          expect(ORM.Base.create).toBeDefined();
+          expect(Shot.create).toBeDefined();
         });
       });
     });
@@ -164,18 +163,6 @@ describe('ORMBase', () => {
 
           test('id is null', () => {
             expect(shot.id).toBeNull();
-          });
-
-          test('has empty changed', () => {
-            expect(shot._changed).toEqual({});
-          });
-
-          test('_dirty false', () => {
-            expect(shot._dirty).toBeFalsy();
-          });
-
-          test('_destroyed false', () => {
-            expect(shot._destroyed).toBeFalsy();
           });
         });
       });
@@ -371,12 +358,6 @@ describe('ORMBase', () => {
         shot = Shot.create({ id: 22, projectId: 42 });
       });
 
-      test('default properties', () => {
-        expect(shot._changed).toEqual({});
-        expect(shot._dirty).toBeFalsy();
-        expect(shot._destroyed).toBeFalsy();
-      });
-
       describe('entityType', () => {
         test('returns the lower case classname', () => {
           expect(shot.entityType()).toBe('shot');
@@ -398,106 +379,6 @@ describe('ORMBase', () => {
         });
       });
 
-      describe('changes', () => {
-        describe('has changes', () => {
-          let changedShot;
-          let changes;
-
-          beforeEach(() => {
-            changedShot = Shot.create({ projectId: 1, team: 'London Spitfire', wins: 2 });
-            changedShot.wins = 3;
-            changes = changedShot.changes();
-          });
-
-          test('returns an object', () => {
-            expect(changes).toBeInstanceOf(Object);
-          });
-
-          test('has one change', () => {
-            expect(Object.keys(changes).length).toBe(1);
-          });
-
-          test('change has new and old value', () => {
-            expect(changes['wins'].oldValue).toBe(2);
-            expect(changes['wins'].newValue).toBe(3);
-          });
-        });
-
-        describe('no changes', () => {
-          let unchangedShot;
-          let changes;
-
-          beforeEach(() => {
-            unchangedShot = Shot.create({ projectId: 1, team: 'London Spitfire', wins: 2 });
-            changes = unchangedShot.changes();
-          });
-
-          test('returns an object', () => {
-            expect(changes).toBeInstanceOf(Object);
-          });
-
-          test('has no change', () => {
-            expect(Object.keys(changes).length).toBe(0);
-          });
-        });
-      });
-
-      describe('save', () => {
-        let saveResult;
-
-        describe('valid instance', () => {
-          beforeEach(() => {
-            onSaveSpy.mockReset();
-
-            shot.channel = 'HBO';
-            saveResult = shot.save();
-          });
-
-          test('calls the onSave method', () => {
-            expect(onSaveSpy).toHaveBeenCalledTimes(1);
-          });
-
-          test('resets the changed info', () => {
-            expect(shot._changed).toEqual({})
-          });
-
-          test('returns a different instance', () => {
-            expect(saveResult).toBeInstanceOf(Shot);
-            expect(saveResult).not.toBe(shot);
-          });
-        });
-
-        describe('invalid instance', () => {
-          let invalidShot;
-
-          beforeEach(() => {
-            invalidShot = Shot.create();
-            onSaveSpy.mockReset();
-
-            invalidShot.channel = 'HBO';
-            saveResult = invalidShot.save();
-          });
-
-          test('does not call the oSave method', () => {
-            expect(onSaveSpy).toHaveBeenCalledTimes(0);
-          });
-
-          test('does not reset the changed info', () => {
-            expect(invalidShot._changed).toEqual({
-              channel: {
-                oldValue: undefined,
-                newValue: 'HBO'
-              }
-            });
-          });
-
-          test('returns the same instance', () => {
-            expect(saveResult).toBeInstanceOf(Shot);
-            expect(saveResult).toBe(invalidShot);
-          });
-        });
-      });
-
       describe('update', () => {
         let updateProps;
         let updateResult;
@@ -506,7 +387,7 @@ describe('ORMBase', () => {
           beforeEach(() => {
             onUpdateSpy.mockReset();
 
-            updateProps = { channel: 'HBO '};
+            updateProps = { projectId: '123' };
             updateResult = shot.update(updateProps);
           });
 
@@ -519,6 +400,7 @@ describe('ORMBase', () => {
           test('returns a different instance', () => {
             expect(updateResult).toBeInstanceOf(Shot);
             expect(updateResult).not.toBe(shot);
+            expect(updateResult.projectId).toBe('123');
           });
         });
 
@@ -529,7 +411,7 @@ describe('ORMBase', () => {
             invalidShot = Shot.create();
             onUpdateSpy.mockReset();
 
-            updateProps = { channel: 'HBO '};
+            updateProps = { projectId: '3432' };
             updateResult = invalidShot.update(updateProps);
           });
 
@@ -540,6 +422,7 @@ describe('ORMBase', () => {
           test('returns the same instance', () => {
             expect(updateResult).toBeInstanceOf(Shot);
             expect(updateResult).toBe(invalidShot);
+            expect(updateResult.projectId).toBeNull();
           });
         });
       });
@@ -555,9 +438,9 @@ describe('ORMBase', () => {
           destroyedShotResult = destroyedShot.destroy();
         });
 
-        test('sets the destroyed prop to true', () => {
-          expect(destroyedShot._destroyed).toBeTruthy();
-        });
+        // test('sets the destroyed prop to true', () => {
+        //   expect(destroyedShot._destroyed).toBeTruthy();
+        // });
 
         test('calls the onDestroy method', () => {
           expect(onDestroySpy).toHaveBeenCalledTimes(1);
