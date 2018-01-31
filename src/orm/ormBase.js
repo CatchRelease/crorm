@@ -11,9 +11,8 @@ import {
 
 import ORM from '../orm';
 
-export class ORMBase {
+class ORMBase {
   constructor(data = null) {
-    this._listener = null;
     this.entity = null;
     this.id = null;
 
@@ -30,8 +29,6 @@ export class ORMBase {
       this.entity = new Immutable.Map();
       this.id = null;
     }
-
-    this.addListener();
 
     return new Proxy(this, {
       get: (target, name) => {
@@ -186,43 +183,6 @@ export class ORMBase {
     return this.constructor.name.toLowerCase();
   }
 
-  addListener() {
-    this._listener = ORM.Config.database.subscribe(() => this.handleChanges());
-  }
-
-  removeListener() {
-    this._listener();
-  }
-
-  handleChanges() {
-    const entityType = this.entityType();
-    const currentEntity = this.entity;
-    const id = this.id ? this.id.toString() : null;
-
-    const newEntity = ORMBase.database().data.getIn(['entities', entityType, id]);
-    const same = currentEntity.equals(newEntity);
-
-    if (!same) {
-      if (newEntity === undefined) {
-        // Odd case, not sure what to do
-      } else {
-        const changed = this._changed;
-
-        if (Object.keys(changed).length) {
-          const newProps = {};
-
-          Object.keys(changed).forEach(change => { newProps[change] = changed[change].newValue; });
-
-          this.entity = newEntity.merge(newProps);
-          this._dirty = true;
-        } else {
-          this.entity = newEntity;
-          this._dirty = false;
-        }
-      }
-    }
-  }
-
   valid() { // eslint-disable-line class-methods-use-this
     return true;
   }
@@ -259,8 +219,6 @@ export class ORMBase {
 
   destroy() {
     this._destroyed = true;
-    this.removeListener();
-
     this.onDestroy(this, ORMBase.dispatch());
 
     return this._clone();

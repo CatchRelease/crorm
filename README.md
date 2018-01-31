@@ -2,7 +2,7 @@
 Catch&Release ORM is a heavily opinionated React/Redux ORM
 
 #### Why an ORM?
-The ORM should remove boilerplate, simplify immutable access, and get rid of the need to connect() your components.
+The ORM should remove boilerplate and simplify immutable access.
 
 Example:
 
@@ -70,6 +70,7 @@ export class Hero extends ORM.Base {
 
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import Hero from 'hero';
 
@@ -78,12 +79,14 @@ import HeroDetails from 'heroDetails';
 
 export class HeroCard extends React.Component {
   static propTypes = {
-    heroId: PropTypes.number.isRequired
+    heroId: PropTypes.number.isRequired,
+    hero: PropTypes.shape({
+      entity: PropTypes.object
+    })
   }
   
   render() {
-    const { heroId } = this.props;    
-    const hero = Hero.find(heroId);
+    const { hero } = this.props;    
     
     return (
       <Fragment>
@@ -93,7 +96,14 @@ export class HeroCard extends React.Component {
       </Fragment>
     ); 
   }
-} 
+}
+
+const mapStateToProps = (state, props) => ({
+  hero: Hero.find(props.heroId)
+});
+
+export default connect(mapStateToProps)(HeroCard);
+
 ```
 
 

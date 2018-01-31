@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.ORMBase = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -27,13 +26,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ORMBase = exports.ORMBase = function () {
+var ORMBase = function () {
   function ORMBase() {
     var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
     _classCallCheck(this, ORMBase);
 
-    this._listener = null;
     this.entity = null;
     this.id = null;
 
@@ -50,8 +48,6 @@ var ORMBase = exports.ORMBase = function () {
       this.entity = new _immutable2.default.Map();
       this.id = null;
     }
-
-    this.addListener();
 
     return new Proxy(this, {
       get: function get(target, name) {
@@ -101,52 +97,6 @@ var ORMBase = exports.ORMBase = function () {
       return this.constructor.name.toLowerCase();
     }
   }, {
-    key: 'addListener',
-    value: function addListener() {
-      var _this = this;
-
-      this._listener = _orm2.default.Config.database.subscribe(function () {
-        return _this.handleChanges();
-      });
-    }
-  }, {
-    key: 'removeListener',
-    value: function removeListener() {
-      this._listener();
-    }
-  }, {
-    key: 'handleChanges',
-    value: function handleChanges() {
-      var entityType = this.entityType();
-      var currentEntity = this.entity;
-      var id = this.id ? this.id.toString() : null;
-
-      var newEntity = ORMBase.database().data.getIn(['entities', entityType, id]);
-      var same = currentEntity.equals(newEntity);
-
-      if (!same) {
-        if (newEntity === undefined) {
-          // Odd case, not sure what to do
-        } else {
-          var changed = this._changed;
-
-          if (Object.keys(changed).length) {
-            var newProps = {};
-
-            Object.keys(changed).forEach(function (change) {
-              newProps[change] = changed[change].newValue;
-            });
-
-            this.entity = newEntity.merge(newProps);
-            this._dirty = true;
-          } else {
-            this.entity = newEntity;
-            this._dirty = false;
-          }
-        }
-      }
-    }
-  }, {
     key: 'valid',
     value: function valid() {
       // eslint-disable-line class-methods-use-this
@@ -191,8 +141,6 @@ var ORMBase = exports.ORMBase = function () {
     key: 'destroy',
     value: function destroy() {
       this._destroyed = true;
-      this.removeListener();
-
       this.onDestroy(this, ORMBase.dispatch());
 
       return this._clone();
@@ -252,7 +200,7 @@ var ORMBase = exports.ORMBase = function () {
   }, {
     key: 'ordered',
     value: function ordered() {
-      var _this2 = this;
+      var _this = this;
 
       var entityType = this.entityType();
       var entities = (0, _ormSelectors.selectOrderedEntities)(ORMBase.database(), { entityType: entityType });
@@ -260,7 +208,7 @@ var ORMBase = exports.ORMBase = function () {
 
       if (!entities[(0, _pluralize2.default)(entityType)].isEmpty()) {
         entities[(0, _pluralize2.default)(entityType)].forEach(function (entity) {
-          results.push(new _this2(entity));
+          results.push(new _this(entity));
         });
       }
 
@@ -301,7 +249,7 @@ var ORMBase = exports.ORMBase = function () {
   }, {
     key: 'all',
     value: function all() {
-      var _this3 = this;
+      var _this2 = this;
 
       var entityType = this.entityType();
       var entities = (0, _ormSelectors.selectEntities)(ORMBase.database(), { entityType: entityType });
@@ -309,7 +257,7 @@ var ORMBase = exports.ORMBase = function () {
 
       if (!entities[(0, _pluralize2.default)(entityType)].isEmpty()) {
         entities[(0, _pluralize2.default)(entityType)].forEach(function (entity) {
-          results.push(new _this3(entity));
+          results.push(new _this2(entity));
         });
       }
 
@@ -318,7 +266,7 @@ var ORMBase = exports.ORMBase = function () {
   }, {
     key: 'where',
     value: function where(props) {
-      var _this4 = this;
+      var _this3 = this;
 
       var entityType = this.entityType();
       var propsWithType = Object.assign({}, props, { entityType: entityType });
@@ -327,7 +275,7 @@ var ORMBase = exports.ORMBase = function () {
 
       if (!entities[(0, _pluralize2.default)(entityType)].isEmpty()) {
         entities[(0, _pluralize2.default)(entityType)].forEach(function (entity) {
-          results.push(new _this4(entity));
+          results.push(new _this3(entity));
         });
       }
 
