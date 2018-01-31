@@ -108,11 +108,12 @@ exports.default = function (recordProps) {
 
         var entityType = this.entityType();
         var entities = (0, _ormSelectors.selectOrderedEntities)(ORMBase.database(), { entityType: entityType });
-        var results = [];
+        var results = _immutable2.default.List();
 
         if (!entities[(0, _pluralize2.default)(entityType)].isEmpty()) {
           entities[(0, _pluralize2.default)(entityType)].forEach(function (entity) {
-            results.push(new _this2(entity));
+            var newRecord = new _this2(entity);
+            results = results.push(newRecord);
           });
         }
 
@@ -157,11 +158,11 @@ exports.default = function (recordProps) {
 
         var entityType = this.entityType();
         var entities = (0, _ormSelectors.selectEntities)(ORMBase.database(), { entityType: entityType });
-        var results = [];
+        var results = _immutable2.default.List();
 
         if (!entities[(0, _pluralize2.default)(entityType)].isEmpty()) {
           entities[(0, _pluralize2.default)(entityType)].forEach(function (entity) {
-            results.push(new _this3(entity));
+            results = results.push(new _this3(entity));
           });
         }
 
@@ -175,11 +176,11 @@ exports.default = function (recordProps) {
         var entityType = this.entityType();
         var propsWithType = Object.assign({}, props, { entityType: entityType });
         var entities = (0, _ormSelectors.selectEntitiesWhere)(ORMBase.database(), propsWithType);
-        var results = [];
+        var results = _immutable2.default.List();
 
         if (!entities[(0, _pluralize2.default)(entityType)].isEmpty()) {
           entities[(0, _pluralize2.default)(entityType)].forEach(function (entity) {
-            results.push(new _this4(entity));
+            results = results.push(new _this4(entity));
           });
         }
 
@@ -204,6 +205,8 @@ exports.default = function (recordProps) {
 };
 
 var _immutable = require('immutable');
+
+var _immutable2 = _interopRequireDefault(_immutable);
 
 var _pluralize = require('pluralize');
 

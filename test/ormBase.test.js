@@ -7,7 +7,6 @@ const { spyOn } = jest;
 ORM.Config.database = store;
 
 const onCreateSpy = jest.fn();
-const onSaveSpy = jest.fn();
 const onUpdateSpy = jest.fn();
 const onDestroySpy = jest.fn();
 
@@ -192,20 +191,20 @@ describe('ORMBase', () => {
         let ordered;
 
         beforeEach(() => {
-          order = Shot.order();
+          order = Shot.order(true);
           ordered = Shot.ordered();
         });
 
-        test('returns an array', () => {
-          expect(ordered).toBeInstanceOf(Array);
+        test('returns an Immutable List', () => {
+          expect(ordered).toBeInstanceOf(Immutable.List);
         });
 
         test('returns Shot instances', () => {
-          expect(ordered[0]).toBeInstanceOf(Shot);
+          expect(ordered.first()).toBeInstanceOf(Shot);
         });
 
         test('returns ordered shots', () => {
-          expect(ordered.map(shot => shot.id)).toEqual(order);
+          expect(ordered.map(shot => shot.id)).toEqual(order.entityOrder);
         });
       });
 
@@ -252,16 +251,16 @@ describe('ORMBase', () => {
           shots = Shot.all();
         });
 
-        test('returns an array', () => {
-          expect(shots).toBeInstanceOf(Array);
+        test('returns an Immutable List', () => {
+          expect(shots).toBeInstanceOf(Immutable.List);
         });
 
         test('array items are Shots', () => {
-          expect(shots[0]).toBeInstanceOf(Shot);
+          expect(shots.first()).toBeInstanceOf(Shot);
         });
 
         test('returns all the shots, unordered', () => {
-          expect(Shot.all().length).toEqual(3);
+          expect(shots.count()).toEqual(3);
         });
       });
 
@@ -273,16 +272,16 @@ describe('ORMBase', () => {
             results = Shot.where({ projectId: '1' });
           });
 
-          test('returns an array', () => {
-            expect(results).toBeInstanceOf(Array);
+          test('returns an Immutable List', () => {
+            expect(results).toBeInstanceOf(Immutable.List);
           });
 
           test('array containts all results', () => {
-            expect(results.length).toBe(2);
+            expect(results.count()).toBe(2);
           });
 
           test('array items are Shots', () => {
-            expect(results[0]).toBeInstanceOf(Shot);
+            expect(results.first()).toBeInstanceOf(Shot);
           });
         });
 
@@ -293,12 +292,12 @@ describe('ORMBase', () => {
             results = Shot.where({ projectId: '3' });
           });
 
-          test('returns an array', () => {
-            expect(results).toBeInstanceOf(Array);
+          test('returns an Immutable List', () => {
+            expect(results).toBeInstanceOf(Immutable.List);
           });
 
           test('array is empty', () => {
-            expect(results.length).toBe(0);
+            expect(results.count()).toBe(0);
           });
         });
       });

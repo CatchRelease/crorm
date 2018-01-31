@@ -1,4 +1,4 @@
-import { Record } from 'immutable';
+import Immutable, { Record } from 'immutable';
 import pluralize from 'pluralize';
 
 import {
@@ -43,11 +43,12 @@ export default function(recordProps) {
     static ordered() {
       const entityType = this.entityType();
       const entities = selectOrderedEntities(ORMBase.database(), { entityType });
-      const results = [];
+      let results = Immutable.List();
 
       if (!entities[pluralize(entityType)].isEmpty()) {
         entities[pluralize(entityType)].forEach(entity => {
-          results.push(new this(entity));
+          const newRecord = new this(entity);
+          results = results.push(newRecord);
         });
       }
 
@@ -83,11 +84,11 @@ export default function(recordProps) {
     static all() {
       const entityType = this.entityType();
       const entities = selectEntities(ORMBase.database(), { entityType });
-      const results = [];
+      let results = Immutable.List();
 
       if (!entities[pluralize(entityType)].isEmpty()) {
         entities[pluralize(entityType)].forEach(entity => {
-          results.push(new this(entity));
+          results = results.push(new this(entity));
         });
       }
 
@@ -98,11 +99,11 @@ export default function(recordProps) {
       const entityType = this.entityType();
       const propsWithType = Object.assign({}, props, { entityType });
       const entities = selectEntitiesWhere(ORMBase.database(), propsWithType);
-      const results = [];
+      let results = Immutable.List();
 
       if (!entities[pluralize(entityType)].isEmpty()) {
         entities[pluralize(entityType)].forEach(entity => {
-          results.push(new this(entity));
+          results = results.push(new this(entity));
         });
       }
 

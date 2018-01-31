@@ -18,7 +18,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import { actions } from 'heroActions';
-import { selectHero } from 'heroSelectors';
 
 import HeroAvatar from 'heroAvatar';
 import HeroDetails from 'heroDetails';
@@ -43,22 +42,26 @@ export class HeroCard extends React.Component {
   }
 } 
 
+const mapStateToProps = (state, props) => ({
+  hero: state.data.getIn(['entities', 'hero', props.heroId.toString()], Immutable.Map())
+});
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     destroyHero: actions.destroyHero
   }, dispatch);
 }
 
-export default connect(selectHero, mapDispatchToProps)(HeroCard);
+export default connect(mapsStateToProps, mapDispatchToProps)(HeroCard);
 ```
 
 **New Style:**
 ```jsx
 // Hero.js
-
+import ORM from 'crorm';
 import { actions } from 'heroActions';
 
-export class Hero extends ORM.Base {
+export class Hero extends ORM.Base({ id: null }) {
   onDestroy(hero, dispatch) {
     dispatch(actions.destroyHero(hero.id));
   }
@@ -71,6 +74,7 @@ export class Hero extends ORM.Base {
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import ORM from 'crorm';
 
 import Hero from 'hero';
 
@@ -99,16 +103,15 @@ export class HeroCard extends React.Component {
 }
 
 const mapStateToProps = (state, props) => ({
-  hero: Hero.find(props.heroId)
+  hero: Hero.findById(props.heroId)
 });
 
 export default connect(mapStateToProps)(HeroCard);
 
 ```
 
-
 #### Expectations
-* Redux data is Immutable
+* Redux data is Immutable utilizing Immutable.Record
 * Data is in the JSONAPI format
 * Data has been parsed using jsonapi-normalizer
 * Actions are all CRUD based
@@ -131,11 +134,11 @@ export default connect(mapStateToProps)(HeroCard);
 
 `entityType()` - Get the entityType as a lowercase string. In our example this will be 'animal'.
 
-`order()` - Get an Array of ids containing the server ordering for the current entityType.
+`order()` - Get an Immutable List of ids containing the server ordering for the current entityType.
 
 `order(true)` - Get an Immutable of the ordering for the current entityType in { entityOrder: Immutable.List } format.
 
-`ordered()` - Get an Array of ordered instances for the current entityType.
+`ordered()` - Get an Immutable List of ordered instances for the current entityType.
 
 `pagination()` - Get the pagination for the current entityType. 
 
@@ -143,7 +146,7 @@ export default connect(mapStateToProps)(HeroCard);
 
 `findById(id)` - Get the instance matching the id for the entityType. Returns instance with empty Immutable.Map() when not found.
 
-`all()` - Get instances for all entities of entityType.
+`all()` - Get and Immutable List for all entities of entityType.
 
 `where(props = {})` - Get the instances where all props are matching.
 
@@ -155,17 +158,11 @@ export default connect(mapStateToProps)(HeroCard);
 
 `valid()` - Override to provide instance validation, return a boolean.
 
-`changes()` - Returns the current changeset in the format `{ changedKey: { newValue, oldValue } }`.
-
-`save()` - Saves the current values and returns a new instance. Calls an onSave to be overridden to save on the backend and update the store.
-
 `updateProps(props = {})` - Update the current values and returns a new instance with the passed in props. Calls an onUpdate to be overridden to save on the backend and update the store.
 
 `destroy()` - Marks the current model as destroyed and returns a "destroyed" instance. Calls an onDestroy to be overridden to save on the backend and update the store.
 
 `onCreate(instance, createProps, dispatch)` - Override to define what happens on create.
-
-`onSave(instance, allProps, dispatch)` - Override to define what happens on save.
 
 `onUpdate(instance, updateProps, dispatch)` - Override to define what happens on update.
 
