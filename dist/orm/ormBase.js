@@ -33,8 +33,8 @@ exports.default = function (recordProps) {
         return this._changed;
       }
     }, {
-      key: 'update',
-      value: function update() {
+      key: 'updateProps',
+      value: function updateProps() {
         var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
         var updateProps = Object.assign({}, props);
@@ -136,8 +136,8 @@ exports.default = function (recordProps) {
         return returnValue;
       }
     }, {
-      key: 'find',
-      value: function find() {
+      key: 'findById',
+      value: function findById() {
         var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
         var entityType = this.entityType();

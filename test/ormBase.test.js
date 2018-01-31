@@ -93,9 +93,9 @@ describe('ORMBase', () => {
         });
       });
 
-      describe('find', () => {
+      describe('findById', () => {
         test('method exists', () => {
-          expect(Shot.find).toBeDefined();
+          expect(Shot.findById).toBeDefined();
         });
       });
 
@@ -230,7 +230,7 @@ describe('ORMBase', () => {
           let shot;
 
           beforeEach(() => {
-            shot = Shot.find(1234);
+            shot = Shot.findById(1234);
           });
 
           test('returns a Shot instance', () => {
@@ -240,7 +240,7 @@ describe('ORMBase', () => {
 
         describe('not found', () => {
           test('returns null', () => {
-            expect(Shot.find(9999)).toBeInstanceOf(Shot);
+            expect(Shot.findById(9999)).toBeInstanceOf(Shot);
           });
         });
       });
@@ -379,7 +379,7 @@ describe('ORMBase', () => {
         });
       });
 
-      describe('update', () => {
+      describe('updateProps', () => {
         let updateProps;
         let updateResult;
 
@@ -388,7 +388,7 @@ describe('ORMBase', () => {
             onUpdateSpy.mockReset();
 
             updateProps = { projectId: '123' };
-            updateResult = shot.update(updateProps);
+            updateResult = shot.updateProps(updateProps);
           });
 
           test('calls the onUpdate method', () => {
@@ -412,7 +412,7 @@ describe('ORMBase', () => {
             onUpdateSpy.mockReset();
 
             updateProps = { projectId: '3432' };
-            updateResult = invalidShot.update(updateProps);
+            updateResult = invalidShot.updateProps(updateProps);
           });
 
           test('does not call the onUpdate method', () => {

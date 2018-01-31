@@ -68,7 +68,7 @@ export default function(recordProps) {
       return returnValue;
     }
 
-    static find(id = '') {
+    static findById(id = '') {
       const entityType = this.entityType();
       const entity = selectEntity(ORMBase.database(), { entityType, id: id.toString() });
       let returnValue = new this();
@@ -130,7 +130,7 @@ export default function(recordProps) {
       return this._changed;
     }
 
-    update(props = {}) {
+    updateProps(props = {}) {
       const updateProps = Object.assign({}, props);
       let returnInstance = this;
 

@@ -141,7 +141,7 @@ export default connect(mapStateToProps)(HeroCard);
 
 `pagination(true)` - Get an Immutable of the pagination for the current entityType in { pagination: Immutable.Map } format.
 
-`find(id)` - Get the instance matching the id for the entityType. Returns instance with empty Immutable.Map() when not found.
+`findById(id)` - Get the instance matching the id for the entityType. Returns instance with empty Immutable.Map() when not found.
 
 `all()` - Get instances for all entities of entityType.
 
@@ -159,7 +159,7 @@ export default connect(mapStateToProps)(HeroCard);
 
 `save()` - Saves the current values and returns a new instance. Calls an onSave to be overridden to save on the backend and update the store.
 
-`update(props = {})` - Update the current values and returns a new instance with the passed in props. Calls an onUpdate to be overridden to save on the backend and update the store.
+`updateProps(props = {})` - Update the current values and returns a new instance with the passed in props. Calls an onUpdate to be overridden to save on the backend and update the store.
 
 `destroy()` - Marks the current model as destroyed and returns a "destroyed" instance. Calls an onDestroy to be overridden to save on the backend and update the store.
 
