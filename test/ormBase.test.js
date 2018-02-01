@@ -5,7 +5,7 @@ import { store, updateShot } from './createStore';
 const { spyOn } = jest;
 
 ORM.Config.database = store;
-ORM.Config.debug = false;
+ORM.Config.debug = true;
 
 const onCreateSpy = jest.fn();
 const onUpdateSpy = jest.fn();

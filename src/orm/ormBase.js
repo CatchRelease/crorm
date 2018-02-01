@@ -79,13 +79,13 @@ export default function(recordProps) {
       if (ORM.Config.debug) {
         console.log(`Called method findById with ${id}`);
         console.log('EntityType:', this.entityType());
-        console.log('Database:', ORMBase.database());
+        console.log('Database:', ORMBase.database().data.toJS());
         console.log('Entity:', entity);
       }
 
       if (!entity[entityType].isEmpty()) {
         if (ORM.Config.debug) {
-          console.log('Entity is not empty');
+          console.log('Entity is not empty', entity[entityType]);
         }
 
         returnValue = new this(entity[entityType]);
