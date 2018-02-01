@@ -1,3 +1,5 @@
+/* eslint no-console: 0 */
+
 import Immutable, { Record } from 'immutable';
 import pluralize from 'pluralize';
 
@@ -74,8 +76,21 @@ export default function(recordProps) {
       const entity = selectEntity(ORMBase.database(), { entityType, id: id.toString() });
       let returnValue = new this({ id: id.toString() });
 
+      if (ORM.Config.debug) {
+        console.log(`Called method findById with ${id}`);
+        console.log('EntityType:', this.entityType());
+        console.log('Database:', ORMBase.database());
+        console.log('Entity:', entity);
+      }
+
       if (!entity[entityType].isEmpty()) {
+        if (ORM.Config.debug) {
+          console.log('Entity is not empty');
+        }
+
         returnValue = new this(entity[entityType]);
+      } else if (ORM.Config.debug) {
+        console.log('Entity is empty');
       }
 
       return returnValue;

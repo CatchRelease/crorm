@@ -124,6 +124,8 @@ export default connect(mapStateToProps)(HeroCard);
 
 `ORM.Config.database = store;`
 
+To Add Debug Output: `ORM.Config.debug = true;`
+
 #### Create your Class
 `class Animal extends ORM.Base {};`
 
