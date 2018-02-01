@@ -13,6 +13,7 @@ var ORMConfig = exports.ORMConfig = function () {
     _classCallCheck(this, ORMConfig);
 
     this._database = null;
+    this._debug = false;
   }
 
   _createClass(ORMConfig, [{
@@ -22,6 +23,14 @@ var ORMConfig = exports.ORMConfig = function () {
     },
     set: function set(database) {
       this._database = database;
+    }
+  }, {
+    key: "debug",
+    get: function get() {
+      return this._debug;
+    },
+    set: function set(debug) {
+      this._debug = debug;
     }
   }]);
 
