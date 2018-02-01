@@ -143,7 +143,7 @@ exports.default = function (recordProps) {
 
         var entityType = this.entityType();
         var entity = (0, _ormSelectors.selectEntity)(ORMBase.database(), { entityType: entityType, id: id.toString() });
-        var returnValue = new this();
+        var returnValue = new this({ id: id.toString() });
 
         if (!entity[entityType].isEmpty()) {
           returnValue = new this(entity[entityType]);

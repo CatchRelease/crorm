@@ -72,7 +72,7 @@ export default function(recordProps) {
     static findById(id = '') {
       const entityType = this.entityType();
       const entity = selectEntity(ORMBase.database(), { entityType, id: id.toString() });
-      let returnValue = new this();
+      let returnValue = new this({ id: id.toString() });
 
       if (!entity[entityType].isEmpty()) {
         returnValue = new this(entity[entityType]);
