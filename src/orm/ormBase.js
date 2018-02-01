@@ -25,7 +25,7 @@ export default function(recordProps) {
     }
 
     static entityType() {
-      return this.name.toLowerCase();
+      throw new Error('Please define a static entityType method on your model.');
     }
 
     static order(immutable = false) {

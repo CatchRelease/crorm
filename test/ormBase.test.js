@@ -5,7 +5,7 @@ import { store, updateShot } from './createStore';
 const { spyOn } = jest;
 
 ORM.Config.database = store;
-ORM.Config.debug = true;
+ORM.Config.debug = false;
 
 const onCreateSpy = jest.fn();
 const onUpdateSpy = jest.fn();
@@ -15,6 +15,8 @@ class Shot extends ORM.Base({
   id: null,
   projectId: null
 }) {
+  static entityType() { return 'shot' };
+
   valid() {
     return !!this.projectId;
   }
