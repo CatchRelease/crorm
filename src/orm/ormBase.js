@@ -142,10 +142,6 @@ export default function(recordProps) {
       return true;
     }
 
-    changes() {
-      return this._changed;
-    }
-
     updateProps(props = {}) {
       const updateProps = Object.assign({}, props);
       let returnInstance = this;

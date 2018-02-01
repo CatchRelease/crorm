@@ -28,11 +28,6 @@ exports.default = function (recordProps) {
         return true;
       }
     }, {
-      key: 'changes',
-      value: function changes() {
-        return this._changed;
-      }
-    }, {
       key: 'updateProps',
       value: function updateProps() {
         var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
