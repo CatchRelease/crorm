@@ -15,17 +15,17 @@ class Shot extends ORM.Base({
   id: null,
   projectId: null
 }) {
-  static entityType() { return 'shot' };
+  static recordType() { return 'shot' };
 
   valid() {
     return !!this.projectId;
   }
 
-  onCreate(shot, attributes, dispatch)  {
+  onCreate(shot, attributes, dispatch) {
     onCreateSpy(shot, attributes);
   }
 
-  onUpdate(shot, attributes, dispatch)  {
+  onUpdate(shot, attributes, dispatch) {
     onUpdateSpy(shot, attributes);
   }
 
@@ -42,8 +42,21 @@ describe('ORMBase', () => {
   });
 
   describe('Base Class', () => {
-    test('exsts', () => {
-      expect(ORM.Base).toBeDefined();
+    describe('valid', () => {
+      test('exsts', () => {
+        expect(ORM.Base).toBeDefined();
+      });
+    });
+
+    describe('invalid', () => {
+      test('throws error', () => {
+        expect(() => {
+          class Bad extends ORM.Base({
+            id: null,
+            recordType: null
+          }) {}
+        }).toThrow(/redefine/);
+      });
     });
 
     describe('Class Methods', () => {
@@ -71,9 +84,9 @@ describe('ORMBase', () => {
         });
       });
 
-      describe('entityType', () => {
+      describe('recordType', () => {
         test('returns lowercase class name', () => {
-          expect(Shot.entityType()).toEqual('shot');
+          expect(Shot.recordType()).toEqual('shot');
         });
       });
 
@@ -169,9 +182,9 @@ describe('ORMBase', () => {
         });
       });
 
-      describe('entityType', () => {
+      describe('recordType', () => {
         test('returns the lowercase inherited class name', () => {
-          expect(Shot.entityType()).toEqual('shot');
+          expect(Shot.recordType()).toEqual('shot');
         });
       });
 
@@ -358,12 +371,6 @@ describe('ORMBase', () => {
 
       beforeEach(() => {
         shot = Shot.create({ id: 22, projectId: 42 });
-      });
-
-      describe('entityType', () => {
-        test('returns the lower case classname', () => {
-          expect(shot.entityType()).toBe('shot');
-        });
       });
 
       describe('valid', () => {

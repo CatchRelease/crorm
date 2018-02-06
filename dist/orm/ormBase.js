@@ -7,6 +7,14 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 exports.default = function (recordProps) {
+  var builtIns = ['recordType', 'valid', 'updateProps', 'destroy', 'onCreate', 'onUpdate', 'onDestroy'];
+
+  if (Object.keys(recordProps).some(function (prop) {
+    return builtIns.includes(prop);
+  })) {
+    throw new Error('Cannot redefine built in params: ' + builtIns.join(', ') + '.');
+  }
+
   return function (_Record) {
     _inherits(ORMBase, _Record);
 
@@ -17,12 +25,13 @@ exports.default = function (recordProps) {
     }
 
     _createClass(ORMBase, [{
-      key: 'entityType',
-      value: function entityType() {
-        return this.constructor.name.toLowerCase();
-      }
-    }, {
       key: 'valid',
+
+
+      // recordType() {
+      //   return this.constructor.name.toLowerCase();
+      // }
+
       value: function valid() {
         // eslint-disable-line class-methods-use-this
         return true;
@@ -75,16 +84,16 @@ exports.default = function (recordProps) {
         return _orm2.default.Config.database.dispatch;
       }
     }, {
-      key: 'entityType',
-      value: function entityType() {
-        throw new Error('Please define a static entityType method on your model.');
+      key: 'recordType',
+      value: function recordType() {
+        throw new Error('Please define a static recordType method on your model.');
       }
     }, {
       key: 'order',
       value: function order() {
         var immutable = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
-        var entityType = this.entityType();
+        var entityType = this.recordType();
         var entityOrder = (0, _ormSelectors.selectEntityOrder)(ORMBase.database(), { entityType: entityType });
         var returnValue = void 0;
 
@@ -101,7 +110,7 @@ exports.default = function (recordProps) {
       value: function ordered() {
         var _this2 = this;
 
-        var entityType = this.entityType();
+        var entityType = this.recordType();
         var entities = (0, _ormSelectors.selectOrderedEntities)(ORMBase.database(), { entityType: entityType });
         var results = _immutable2.default.List();
 
@@ -119,7 +128,7 @@ exports.default = function (recordProps) {
       value: function pagination() {
         var immutable = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
-        var entityType = this.entityType();
+        var entityType = this.recordType();
         var pagination = (0, _ormSelectors.selectPagination)(ORMBase.database(), { entityType: entityType });
         var returnValue = void 0;
 
@@ -136,13 +145,13 @@ exports.default = function (recordProps) {
       value: function findById() {
         var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
-        var entityType = this.entityType();
+        var entityType = this.recordType();
         var entity = (0, _ormSelectors.selectEntity)(ORMBase.database(), { entityType: entityType, id: id.toString() });
         var returnValue = new this({ id: id.toString() });
 
         if (_orm2.default.Config.debug) {
           console.log('Called method findById with ' + id);
-          console.log('EntityType:', this.entityType());
+          console.log('EntityType:', this.recordType());
           console.log('Database:', ORMBase.database().data.toJS());
           console.log('Entity:', entity);
         }
@@ -164,7 +173,7 @@ exports.default = function (recordProps) {
       value: function all() {
         var _this3 = this;
 
-        var entityType = this.entityType();
+        var entityType = this.recordType();
         var entities = (0, _ormSelectors.selectEntities)(ORMBase.database(), { entityType: entityType });
         var results = _immutable2.default.List();
 
@@ -181,7 +190,7 @@ exports.default = function (recordProps) {
       value: function where(props) {
         var _this4 = this;
 
-        var entityType = this.entityType();
+        var entityType = this.recordType();
         var propsWithType = Object.assign({}, props, { entityType: entityType });
         var entities = (0, _ormSelectors.selectEntitiesWhere)(ORMBase.database(), propsWithType);
         var results = _immutable2.default.List();

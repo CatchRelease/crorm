@@ -62,7 +62,7 @@ import ORM from 'crorm';
 import { actions } from 'heroActions';
 
 export class Hero extends ORM.Base({ id: null }) {
-  static entityType() { return 'hero'; };
+  static recordType() { return 'hero'; };
 
   onDestroy(hero, dispatch) {
     dispatch(actions.destroyHero(hero.id));
@@ -136,7 +136,7 @@ To Add Debug Output: `ORM.Config.debug = true;`
 
 `dispatch()` - Get the Redux Store dispatch function.
 
-`entityType()` - Override in your model. Should be the name of your model in redux, i.e. 'hero'.
+`recordType()` - Override in your model. Should be the name of your model in redux, i.e. 'hero'.
 
 `order()` - Get an Immutable List of ids containing the server ordering for the current entityType.
 

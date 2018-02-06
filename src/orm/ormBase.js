@@ -15,6 +15,12 @@ import {
 import ORM from '../orm';
 
 export default function(recordProps) {
+  const builtIns = ['recordType', 'valid', 'updateProps', 'destroy', 'onCreate', 'onUpdate', 'onDestroy'];
+
+  if (Object.keys(recordProps).some(prop => builtIns.includes(prop))) {
+    throw new Error(`Cannot redefine built in params: ${builtIns.join(', ')}.`);
+  }
+
   return class ORMBase extends Record(recordProps) {
     static database() {
       return ORM.Config.database.getState();
@@ -24,12 +30,12 @@ export default function(recordProps) {
       return ORM.Config.database.dispatch;
     }
 
-    static entityType() {
-      throw new Error('Please define a static entityType method on your model.');
+    static recordType() {
+      throw new Error('Please define a static recordType method on your model.');
     }
 
     static order(immutable = false) {
-      const entityType = this.entityType();
+      const entityType = this.recordType();
       const entityOrder = selectEntityOrder(ORMBase.database(), { entityType });
       let returnValue;
 
@@ -43,7 +49,7 @@ export default function(recordProps) {
     }
 
     static ordered() {
-      const entityType = this.entityType();
+      const entityType = this.recordType();
       const entities = selectOrderedEntities(ORMBase.database(), { entityType });
       let results = Immutable.List();
 
@@ -58,7 +64,7 @@ export default function(recordProps) {
     }
 
     static pagination(immutable = false) {
-      const entityType = this.entityType();
+      const entityType = this.recordType();
       const pagination = selectPagination(ORMBase.database(), { entityType });
       let returnValue;
 
@@ -72,13 +78,13 @@ export default function(recordProps) {
     }
 
     static findById(id = '') {
-      const entityType = this.entityType();
+      const entityType = this.recordType();
       const entity = selectEntity(ORMBase.database(), { entityType, id: id.toString() });
       let returnValue = new this({ id: id.toString() });
 
       if (ORM.Config.debug) {
         console.log(`Called method findById with ${id}`);
-        console.log('EntityType:', this.entityType());
+        console.log('EntityType:', this.recordType());
         console.log('Database:', ORMBase.database().data.toJS());
         console.log('Entity:', entity);
       }
@@ -97,7 +103,7 @@ export default function(recordProps) {
     }
 
     static all() {
-      const entityType = this.entityType();
+      const entityType = this.recordType();
       const entities = selectEntities(ORMBase.database(), { entityType });
       let results = Immutable.List();
 
@@ -111,7 +117,7 @@ export default function(recordProps) {
     }
 
     static where(props) {
-      const entityType = this.entityType();
+      const entityType = this.recordType();
       const propsWithType = Object.assign({}, props, { entityType });
       const entities = selectEntitiesWhere(ORMBase.database(), propsWithType);
       let results = Immutable.List();
@@ -134,9 +140,9 @@ export default function(recordProps) {
       return model;
     }
 
-    entityType() {
-      return this.constructor.name.toLowerCase();
-    }
+    // recordType() {
+    //   return this.constructor.name.toLowerCase();
+    // }
 
     valid() { // eslint-disable-line class-methods-use-this
       return true;
