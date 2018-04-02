@@ -267,8 +267,8 @@ describe('ORMBase', () => {
           shots = Shot.all();
         });
 
-        test('returns an Immutable List', () => {
-          expect(shots).toBeInstanceOf(Immutable.List);
+        test('returns an Immutable Map', () => {
+          expect(shots).toBeInstanceOf(Immutable.Map);
         });
 
         test('array items are Shots', () => {

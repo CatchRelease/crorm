@@ -150,7 +150,7 @@ To Add Debug Output: `ORM.Config.debug = true;`
 
 `findById(id)` - Get the instance matching the id for the entityType. Returns instance with empty Immutable.Map() when not found.
 
-`all()` - Get and Immutable List for all entities of entityType.
+`all()` - Get and Immutable Map for all entities of entityType.
 
 `where(props = {})` - Get the instances where all props are matching.
 

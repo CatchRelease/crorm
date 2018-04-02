@@ -105,11 +105,12 @@ export default function(recordProps) {
     static all() {
       const entityType = this.recordType();
       const entities = selectEntities(ORMBase.database(), { entityType });
-      let results = Immutable.List();
+      let results = Immutable.Map();
 
       if (!entities[pluralize(entityType)].isEmpty()) {
-        entities[pluralize(entityType)].forEach(entity => {
-          results = results.push(new this(entity));
+        entities[pluralize(entityType)].forEach((entity, i) => {
+          const entityId = entity.getIn(['id'], i);
+          results = results.set(entityId, new this(entity));
         });
       }
 

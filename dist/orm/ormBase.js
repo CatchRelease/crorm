@@ -175,11 +175,12 @@ exports.default = function (recordProps) {
 
         var entityType = this.recordType();
         var entities = (0, _ormSelectors.selectEntities)(ORMBase.database(), { entityType: entityType });
-        var results = _immutable2.default.List();
+        var results = _immutable2.default.Map();
 
         if (!entities[(0, _pluralize2.default)(entityType)].isEmpty()) {
-          entities[(0, _pluralize2.default)(entityType)].forEach(function (entity) {
-            results = results.push(new _this3(entity));
+          entities[(0, _pluralize2.default)(entityType)].forEach(function (entity, i) {
+            var entityId = entity.getIn(['id'], i);
+            results = results.set(entityId, new _this3(entity));
           });
         }
 
