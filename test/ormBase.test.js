@@ -1,8 +1,6 @@
-import Immutable, { Record } from 'immutable';
+import Immutable from 'immutable';
 import ORM from '../src/orm';
-import { store, updateShot } from './createStore';
-
-const { spyOn } = jest;
+import { store } from './createStore';
 
 ORM.Config.database = store;
 ORM.Config.debug = false;
@@ -15,21 +13,21 @@ class Shot extends ORM.Base({
   id: null,
   projectId: null
 }) {
-  static recordType() { return 'shot' };
+  static recordType() { return 'shot'; }
 
   valid() {
     return !!this.projectId;
   }
 
-  onCreate(shot, attributes, dispatch) {
+  onCreate(shot, attributes, dispatch) { // eslint-disable-line class-methods-use-this
     onCreateSpy(shot, attributes);
   }
 
-  onUpdate(shot, attributes, dispatch) {
+  onUpdate(shot, attributes, dispatch) { // eslint-disable-line class-methods-use-this
     onUpdateSpy(shot, attributes);
   }
 
-  onDestroy(shot, dispatch) {
+  onDestroy(shot, dispatch) { // eslint-disable-line class-methods-use-this
     onDestroySpy(shot);
   }
 }
@@ -51,7 +49,7 @@ describe('ORMBase', () => {
     describe('invalid', () => {
       test('throws error', () => {
         expect(() => {
-          class Bad extends ORM.Base({
+          class Bad extends ORM.Base({ // eslint-disable-line no-unused-vars
             id: null,
             recordType: null
           }) {}
@@ -191,13 +189,13 @@ describe('ORMBase', () => {
       describe('order', () => {
         describe('array', () => {
           test('returns the order array', () => {
-            expect(Shot.order()).toEqual(["2345", "3456", "1234"]);
+            expect(Shot.order()).toEqual(['2345', '3456', '1234']);
           });
         });
 
         describe('immutable', () => {
           test('returns the order immutable', () => {
-            expect(Shot.order(true)).toEqual({ entityOrder: Immutable.List(["2345", "3456", "1234"]) });
+            expect(Shot.order(true)).toEqual({ entityOrder: Immutable.List(['2345', '3456', '1234']) });
           });
         });
       });

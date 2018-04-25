@@ -1,5 +1,5 @@
 import Immutable from 'immutable';
-import { createStore, combineReducers } from 'redux'
+import { createStore, combineReducers } from 'redux';
 
 // Setup Redux Store
 export const initialState = Immutable.fromJS({
@@ -39,7 +39,7 @@ export function updateShot(shotId, props) {
     type: 'UPDATE_SHOT',
     shotId,
     props
-  }
+  };
 }
 
 function reducer(state = initialState, action) {
@@ -53,7 +53,7 @@ function reducer(state = initialState, action) {
         }
       });
     default:
-      return state
+      return state;
   }
 }
 
