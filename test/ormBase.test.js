@@ -282,20 +282,42 @@ describe('ORMBase', () => {
         describe('results', () => {
           let results;
 
-          beforeEach(() => {
-            results = Shot.where({ projectId: '1' });
+          describe('single match value', () => {
+            beforeEach(() => {
+              results = Shot.where({ projectId: '1' });
+            });
+
+            test('returns an Immutable List', () => {
+              expect(results).toBeInstanceOf(Immutable.List);
+            });
+
+            test('array contains all results', () => {
+              expect(results.count()).toBe(2);
+              expect(results.every((result) => result.projectId === '1')).toBe(true);
+            });
+
+            test('array items are Shots', () => {
+              expect(results.first()).toBeInstanceOf(Shot);
+            });
           });
 
-          test('returns an Immutable List', () => {
-            expect(results).toBeInstanceOf(Immutable.List);
-          });
+          describe('array of matchable values', () => {
+            beforeEach(() => {
+              results = Shot.where({ projectId: ['1', '2'] });
+            });
 
-          test('array containts all results', () => {
-            expect(results.count()).toBe(2);
-          });
+            test('returns an Immutable List', () => {
+              expect(results).toBeInstanceOf(Immutable.List);
+            });
 
-          test('array items are Shots', () => {
-            expect(results.first()).toBeInstanceOf(Shot);
+            test('array contains all results', () => {
+              expect(results.count()).toBe(3);
+              expect(results.every((result) => ['1', '2'].includes(result.projectId))).toBe(true);
+            });
+
+            test('array items are Shots', () => {
+              expect(results.first()).toBeInstanceOf(Shot);
+            });
           });
         });
 

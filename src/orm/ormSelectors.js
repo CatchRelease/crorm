@@ -38,8 +38,13 @@ export const selectEntitiesWhere = createSelector([getProps, getEntityType, getE
       Object.keys(propsWithoutEntityType).every(prop => {
         const key = prop;
         const value = props[prop] === 'id' ? props[prop].toString() : props[prop];
+        const entityValue = entity.getIn([key], '');
 
-        return entity.getIn([key], '') === value;
+        if (Array.isArray(value)) {
+          return value.includes(entityValue);
+        }
+
+        return entityValue === value;
       }), null, Immutable.Map())
   };
 });
