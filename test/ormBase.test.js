@@ -204,21 +204,48 @@ describe('ORMBase', () => {
         let order;
         let ordered;
 
-        beforeEach(() => {
-          order = Shot.order(true);
-          ordered = Shot.ordered();
+        describe('without filter', () => {
+          beforeEach(() => {
+            order = Shot.order(true);
+            ordered = Shot.ordered();
+          });
+
+          test('returns an Immutable List', () => {
+            expect(ordered).toBeInstanceOf(Immutable.List);
+          });
+
+          test('returns Shot instances', () => {
+            expect(ordered.first()).toBeInstanceOf(Shot);
+          });
+
+          test('returns ordered shots', () => {
+            expect(ordered.map(shot => shot.id)).toEqual(order.entityOrder);
+          });
         });
 
-        test('returns an Immutable List', () => {
-          expect(ordered).toBeInstanceOf(Immutable.List);
-        });
+        describe('with filter', () => {
+          beforeEach(() => {
+            order = Shot.order(true);
+            ordered = Shot.ordered({ projectId: '1' });
+          });
 
-        test('returns Shot instances', () => {
-          expect(ordered.first()).toBeInstanceOf(Shot);
-        });
+          test('returns an Immutable List', () => {
+            expect(ordered).toBeInstanceOf(Immutable.List);
+          });
 
-        test('returns ordered shots', () => {
-          expect(ordered.map(shot => shot.id)).toEqual(order.entityOrder);
+          test('returns Shot instances that match the filter', () => {
+            ordered.forEach((item) => {
+              expect(item).toBeInstanceOf(Shot);
+              expect(item.projectId).toEqual('1');
+            });
+          });
+
+          test('returns ordered shots', () => {
+            const ids = ordered.map(shot => shot.id);
+            const includedEntities = order.entityOrder.filter((id) => ids.includes(id));
+
+            expect(ids).toEqual(includedEntities);
+          });
         });
       });
 
