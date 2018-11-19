@@ -53,7 +53,7 @@ export const selectEntityOrder = createSelector([getEntityOrder], (entityOrder) 
   entityOrder
 }));
 
-export const selectOrderedEntities = createSelector([getEntityType, selectEntities, getEntityOrder], getOrderedEntities);
+export const selectOrderedEntities = createSelector([getEntityType, selectEntitiesWhere, getEntityOrder], getOrderedEntities);
 
 export const selectPagination = createSelector([getPagination], (pagination) => ({
   pagination

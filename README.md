@@ -171,3 +171,7 @@ To Add Debug Output: `ORM.Config.debug = true;`
 `onUpdate(instance, updateProps, dispatch)` - Override to define what happens on update.
 
 `onDestroy(instance, dispatch)` - Override to define what happens on destroy.
+
+### Pushing a New Version
+
+  * `npm run build && npm publish`

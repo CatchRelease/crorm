@@ -48,9 +48,9 @@ export default function(recordProps) {
       return returnValue;
     }
 
-    static ordered() {
+    static ordered(props = {}) {
       const entityType = this.recordType();
-      const entities = selectOrderedEntities(ORMBase.database(), { entityType });
+      const entities = selectOrderedEntities(ORMBase.database(), Object.assign({}, props, { entityType }));
       let results = Immutable.List();
 
       if (!entities[pluralize(entityType)].isEmpty()) {
