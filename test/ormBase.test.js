@@ -1,6 +1,10 @@
 import Immutable from 'immutable';
+import { spyOn } from 'jest';
+
 import ORM from '../src/orm';
+import * as selectors from '../src/orm/ormSelectors';
 import { store } from './createStore';
+
 
 ORM.Config.database = store;
 ORM.Config.debug = false;
@@ -9,10 +13,12 @@ const onCreateSpy = jest.fn();
 const onUpdateSpy = jest.fn();
 const onDestroySpy = jest.fn();
 
+const Base = ORM.Base({});
+
 class Shot extends ORM.Base({
   id: null,
   projectId: null
-}) {
+}, 'shot') {
   static recordType() { return 'shot'; }
 
   valid() {
@@ -32,7 +38,31 @@ class Shot extends ORM.Base({
   }
 }
 
+class Project extends ORM.Base({
+  id: null
+}, 'project') {
+  static recordType() { return 'project'; }
+
+  valid() {
+    return !!this.projectId;
+  }
+
+  onCreate(project, attributes, dispatch) { // eslint-disable-line class-methods-use-this
+    onCreateSpy(project, attributes);
+  }
+
+  onUpdate(project, attributes, dispatch) { // eslint-disable-line class-methods-use-this
+    onUpdateSpy(project, attributes);
+  }
+
+  onDestroy(project, dispatch) { // eslint-disable-line class-methods-use-this
+    onDestroySpy(project);
+  }
+}
+
 describe('ORMBase', () => {
+  const classMethods = ['order', 'ordered', 'pagination', 'findById', 'all', 'where', 'create'];
+
   describe('Setup', () => {
     test('store is setup', () => {
       expect(store).toBeDefined();
@@ -60,80 +90,40 @@ describe('ORMBase', () => {
     describe('Class Methods', () => {
       describe('database', () => {
         test('returns an object', () => {
-          expect(Shot.database()).toBeInstanceOf(Object);
+          expect(Base.database()).toBeInstanceOf(Object);
         });
 
         test('has a data member', () => {
-          expect(Shot.database().data).toBeDefined();
+          expect(Base.database().data).toBeDefined();
         });
 
         test('data is the store state', () => {
-          expect(Shot.database().data).toEqual(store.getState().data);
+          expect(Base.database().data).toEqual(store.getState().data);
         });
       });
 
       describe('dispatch', () => {
         test('returns a function', () => {
-          expect(Shot.dispatch()).toBeInstanceOf(Function);
+          expect(Base.dispatch()).toBeInstanceOf(Function);
         });
 
         test('returns the stores dispatch method', () => {
-          expect(Shot.dispatch()).toBe(store.dispatch);
+          expect(Base.dispatch()).toBe(store.dispatch);
         });
       });
 
-      describe('recordType', () => {
-        test('returns lowercase class name', () => {
-          expect(Shot.recordType()).toEqual('shot');
-        });
-      });
-
-      describe('order', () => {
-        test('method exists', () => {
-          expect(Shot.order).toBeDefined();
-        });
-      });
-
-      describe('ordered', () => {
-        test('method exists', () => {
-          expect(Shot.ordered).toBeDefined();
-        });
-      });
-
-      describe('pagination', () => {
-        test('method exists', () => {
-          expect(Shot.pagination).toBeDefined();
-        });
-      });
-
-      describe('findById', () => {
-        test('method exists', () => {
-          expect(Shot.findById).toBeDefined();
-        });
-      });
-
-      describe('all', () => {
-        test('method exists', () => {
-          expect(Shot.all).toBeDefined();
-        });
-      });
-
-      describe('where', () => {
-        test('method exists', () => {
-          expect(Shot.where).toBeDefined();
-        });
-      });
-
-      describe('create', () => {
-        test('method exists', () => {
-          expect(Shot.create).toBeDefined();
+      classMethods.forEach(method => {
+        describe(method, () => {
+          test('method exists', () => {
+            expect(Base[method]).toBeInstanceOf(Function);
+          });
         });
       });
     });
   });
 
   describe('Inherited Shot Class', () => {
-    test('exsts', () => {
+    test('exists', () => {
       expect(Shot).toBeDefined();
     });
 
