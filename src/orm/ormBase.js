@@ -1,27 +1,32 @@
-/* eslint no-console: 0 */
-
-import Immutable, { Record } from 'immutable';
-import pluralize from 'pluralize';
-
-import {
-  selectEntity,
-  selectEntities,
-  selectEntitiesWhere,
-  selectEntityOrder,
-  selectOrderedEntities,
-  selectPagination
-} from './ormSelectors';
+import { Record } from 'immutable';
+import { createSelector } from 'reselect';
 
 import ORM from '../orm';
+import {
+  createEntitiesSelector,
+  createEntityOrderSelector,
+  createEntitySelector,
+  createOrderedEntitiesSelector,
+  createPaginationSelector,
+  createWhereSelector
+} from './ormSelectors';
 
-export default function(recordProps) {
+export default function(recordProps, recordType) {
+  const EMPTY_PREDICATE = Object.freeze({});
   const builtIns = ['recordType', 'valid', 'updateProps', 'destroy', 'onCreate', 'onUpdate', 'onDestroy'];
 
   if (Object.keys(recordProps).some(prop => builtIns.includes(prop))) {
     throw new Error(`Cannot redefine built in params: ${builtIns.join(', ')}.`);
   }
 
-  return class ORMBase extends Record(recordProps) {
+  const selectEntities = createEntitiesSelector(recordType);
+  const selectEntity = createEntitySelector(recordType);
+  const selectEntitiesWhere = createSelector([createWhereSelector(recordType)], entities => entities.toList());
+  const selectEntityOrder = createEntityOrderSelector(recordType);
+  const selectPagination = createPaginationSelector(recordType);
+  const selectOrderedEntities = createSelector([createOrderedEntitiesSelector(recordType, createWhereSelector(recordType))], (entities) => entities.toList());
+
+  class ORMBase extends Record(recordProps) {
     static database() {
       return ORM.Config.database.getState();
     }
@@ -31,105 +36,31 @@ export default function(recordProps) {
     }
 
     static recordType() {
-      throw new Error('Please define a static recordType method on your model.');
+      return recordType;
     }
 
-    static order(immutable = false) {
-      const entityType = this.recordType();
-      const entityOrder = selectEntityOrder(ORMBase.database(), { entityType });
-      let returnValue;
-
-      if (immutable) {
-        returnValue = entityOrder;
-      } else {
-        returnValue = entityOrder.entityOrder.toJS();
-      }
-
-      return returnValue;
+    static order() {
+      return selectEntityOrder(ORMBase.database());
     }
 
-    static ordered(props = {}) {
-      const entityType = this.recordType();
-      const entities = selectOrderedEntities(ORMBase.database(), Object.assign({}, props, { entityType }));
-      let results = Immutable.List();
-
-      if (!entities[pluralize(entityType)].isEmpty()) {
-        entities[pluralize(entityType)].forEach(entity => {
-          const newRecord = new this(entity);
-          results = results.push(newRecord);
-        });
-      }
-
-      return results;
+    static ordered(predicates = EMPTY_PREDICATE) {
+      return selectOrderedEntities(ORMBase.database(), predicates);
     }
 
-    static pagination(immutable = false) {
-      const entityType = this.recordType();
-      const pagination = selectPagination(ORMBase.database(), { entityType });
-      let returnValue;
-
-      if (immutable) {
-        returnValue = pagination;
-      } else {
-        returnValue = pagination.pagination.toJS();
-      }
-
-      return returnValue;
+    static pagination() {
+      return selectPagination(ORMBase.database());
     }
 
     static findById(id = '') {
-      const entityType = this.recordType();
-      const entity = selectEntity(ORMBase.database(), { entityType, id: id.toString() });
-      let returnValue = new this({ id: id.toString() });
-
-      if (ORM.Config.debug) {
-        console.log(`Called method findById with ${id}`);
-        console.log('EntityType:', this.recordType());
-        console.log('Database:', ORMBase.database().data.toJS());
-        console.log('Entity:', entity);
-      }
-
-      if (!entity[entityType].isEmpty()) {
-        if (ORM.Config.debug) {
-          console.log('Entity is not empty', entity[entityType]);
-        }
-
-        returnValue = new this(entity[entityType]);
-      } else if (ORM.Config.debug) {
-        console.log('Entity is empty');
-      }
-
-      return returnValue;
+      return selectEntity(ORMBase.database(), { id: id.toString() });
     }
 
     static all() {
-      const entityType = this.recordType();
-      const entities = selectEntities(ORMBase.database(), { entityType });
-      let results = Immutable.Map();
-
-      if (!entities[pluralize(entityType)].isEmpty()) {
-        entities[pluralize(entityType)].forEach((entity, i) => {
-          const entityId = entity.getIn(['id'], i);
-          results = results.set(entityId, new this(entity));
-        });
-      }
-
-      return results;
+      return selectEntities(ORMBase.database());
     }
 
-    static where(props) {
-      const entityType = this.recordType();
-      const propsWithType = Object.assign({}, props, { entityType });
-      const entities = selectEntitiesWhere(ORMBase.database(), propsWithType);
-      let results = Immutable.List();
-
-      if (!entities[pluralize(entityType)].isEmpty()) {
-        entities[pluralize(entityType)].forEach(entity => {
-          results = results.push(new this(entity));
-        });
-      }
-
-      return results;
+    static where(predicates) {
+      return selectEntitiesWhere(ORMBase.database(), predicates);
     }
 
     static create(attributes = {}) {
@@ -140,10 +71,6 @@ export default function(recordProps) {
 
       return model;
     }
-
-    // recordType() {
-    //   return this.constructor.name.toLowerCase();
-    // }
 
     valid() { // eslint-disable-line class-methods-use-this
       return true;
@@ -178,5 +105,7 @@ export default function(recordProps) {
     onDestroy() {
       return this;
     }
-  };
+  }
+
+  return ORMBase;
 }

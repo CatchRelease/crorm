@@ -131,7 +131,8 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Build your Model on top of the ORM. The object definition is the exact same as Immutable Records (<a href="https://facebook.github.io/immutable-js/docs/#/Record)">https://facebook.github.io/immutable-js/docs/#/Record)</a>.</p>
+              <p>Build your Model on top of the ORM. The object definition is the exact same as Immutable Records (<a href="https://facebook.github.io/immutable-js/docs/#/Record">https://facebook.github.io/immutable-js/docs/#/Record</a>).
+The second parameter is the recordType and is used to look up your model in the Redux store.</p>
 
             </div>
             
@@ -139,7 +140,7 @@
   id: <span class="hljs-literal">null</span>,
   <span class="hljs-attr">myAttribute1</span>: <span class="hljs-literal">null</span>,
   <span class="hljs-attr">myAttribute2</span>: <span class="hljs-literal">null</span>
-}) {</pre></div></div>
+}, <span class="hljs-string">'myModel'</span>) {</pre></div></div>
             
         </li>
         
@@ -149,21 +150,6 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
-              </div>
-              <p><code>static recordType()</code> <strong>is required</strong> and is used to look up your model in the Redux store.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">static</span> recordType() { <span class="hljs-keyword">return</span> <span class="hljs-string">'myModel'</span> };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-11">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p><code>valid()</code> allows you to define a custom validator for the model. Invalid models will
 not call the updateProps method.</p>
@@ -177,11 +163,11 @@ not call the updateProps method.</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p><code>onCreate(model, attributes, dispatch)</code> is called when using the <code>ORM.create()</code> method.
 This gets passed a copy of the immutable instance, the attributes the model was created with, and the store
@@ -196,11 +182,11 @@ dispatch function.</p>
         </li>
         
         
-        <li id="section-13">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p><code>onUpdate(model, attributes, dispatch)</code> is called when using the <code>ORM.updateProps()</code> method.
 This gets passed a copy of the immutable instance, the attributes the model was created with, and the store
@@ -215,11 +201,11 @@ dispatch function.</p>
         </li>
         
         
-        <li id="section-14">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p><code>onDestroy(model, dispatch)</code> is called when using the <code>ORM.updateProps()</code> method.
 This gets passed a copy of the immutable instance and the store dispatch function.</p>
@@ -234,14 +220,26 @@ This gets passed a copy of the immutable instance and the store dispatch functio
         </li>
         
         
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <h2 id="usage-in-components">Usage in Components</h2>
+
+            </div>
+            
+        </li>
+        
+        
         <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <h2 id="usage-in-components">Usage in Components</h2>
-
+              
             </div>
             
         </li>
@@ -253,18 +251,6 @@ This gets passed a copy of the immutable instance and the store dispatch functio
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-17">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
-              </div>
               <p>Define your connected component as usual</p>
 
             </div>
@@ -275,11 +261,11 @@ This gets passed a copy of the immutable instance and the store dispatch functio
         </li>
         
         
-        <li id="section-18">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Using PropTypes isn’t required but is good practice. The <code>where</code> method returns an
 Immutable List of our Record Types.</p>
@@ -298,11 +284,11 @@ Immutable List of our Record Types.</p>
         </li>
         
         
-        <li id="section-19">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>We have direct access to the model attributes here which makes them easy to print.
 With the addition of the onClick handler, our model will automatically update its value
@@ -319,11 +305,11 @@ as well as calling the <code>onUpdate</code> action to do any backend processing
         </li>
         
         
-        <li id="section-20">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>We do the <code>where</code> call inside the connect mapStateToProps method so that it will receive
 updates when the Redux store changes and continue to pass them down the render tree.</p>
@@ -341,14 +327,26 @@ updates when the Redux store changes and continue to pass them down the render t
         </li>
         
         
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <h2 id="the-api">The API</h2>
+
+            </div>
+            
+        </li>
+        
+        
         <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <h2 id="the-api">The API</h2>
-
+              
             </div>
             
         </li>
@@ -360,7 +358,8 @@ updates when the Redux store changes and continue to pass them down the render t
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              
+              <p>Class Methods</p>
+
             </div>
             
         </li>
@@ -372,9 +371,11 @@ updates when the Redux store changes and continue to pass them down the render t
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              <p>Class Methods</p>
+              <p>The <code>recordType</code> method returns the recordType specified in the model definition.</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>MyModel.recordType();</pre></div></div>
             
         </li>
         
@@ -385,8 +386,7 @@ updates when the Redux store changes and continue to pass them down the render t
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
-              <p>The <code>order</code> method returns the id order of the Models as received from the server.
-It’s returned as an array by default but can be returned as immutable by passing true to the method.</p>
+              <p>The <code>order</code> method returns an Immutable List of ids containing the order of the Models as received from the server.</p>
 
             </div>
             
@@ -416,8 +416,7 @@ It’s returned as an array by default but can be returned as immutable by passi
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
-              <p>The <code>pagiantion</code> method returns a Javascript Object that contains the pagination information returned from the server.
-It can also be returned as an Immutable by passing true to the method.</p>
+              <p>The <code>pagiantion</code> method returns the pagination information returned from the server.</p>
 
             </div>
             

@@ -1,41 +1,32 @@
 import Immutable from 'immutable';
-import pluralize from 'pluralize';
 import { createSelector } from 'reselect';
 
 const getProps = (state, props) => props;
 const getId = (state, props) => props.id;
-const getEntityType = (state, props) => props.entityType;
-const getPagination = (state, props) => (state.data.getIn(['pagination', props.entityType], Immutable.Map()) || Immutable.Map());
-const getEntities = (state, props) => (state.data.getIn(['entities', props.entityType], Immutable.Map()) || Immutable.Map());
-export const getEntityOrder = (state, props) => (state.data.getIn(['entityOrder', props.entityType], Immutable.List()) || Immutable.List());
+const createGetPagination = (entityType) => (state) => (state.data.getIn(['pagination', entityType], Immutable.Map()) || Immutable.Map());
+const createGetEntities = (entityType) => (state) => (state.data.getIn(['entities', entityType], Immutable.Map()) || Immutable.Map());
+const createGetEntityOrder = (entityType) => (state) => (state.data.getIn(['entityOrder', entityType], Immutable.List()) || Immutable.List());
 
-const getOrderedEntities = (entityType, entityHash, entityOrder) => ({
-  [pluralize(entityType)]: Immutable.OrderedMap().withMutations(map => { // eslint-disable-line new-cap
-    entityOrder.forEach((entityId, index) => {
-      const entity = entityHash[pluralize(entityType)].get(entityId);
+export const createEntitySelector = (entityType) => {
+  const getEntities = createGetEntities(entityType);
 
-      if (entity) {
-        map.set(index, entity);
-      }
-    });
-  })
-});
+  return createSelector([getId, getEntities], (id, entities) => (
+    entities.find(entity => entity.get('id', '').toString() === id.toString(), null, null)
+  ));
+};
 
-export const selectEntity = createSelector([getId, getEntityType, getEntities], (id, entityType, entities) => ({
-  [entityType]: entities.find(entity => entity.getIn(['id'], '').toString() === id.toString(), null, Immutable.Map())
-}));
+export const createEntitiesSelector = (entityType) => {
+  const getEntities = createGetEntities(entityType);
 
-export const selectEntities = createSelector([getEntityType, getEntities], (entityType, entities) => ({
-  [pluralize(entityType)]: entities
-}));
+  return createSelector([getEntities], (entities) => entities);
+};
 
-export const selectEntitiesWhere = createSelector([getProps, getEntityType, getEntities], (props, entityType, entities) => {
-  const propsWithoutEntityType = Object.assign({}, props);
-  delete propsWithoutEntityType.entityType;
+export const createWhereSelector = (entityType) => {
+  const getEntities = createGetEntities(entityType);
 
-  return {
-    [pluralize(entityType)]: entities.filter(entity =>
-      Object.keys(propsWithoutEntityType).every(prop => {
+  return createSelector([getProps, getEntities], (props, entities) => (
+    entities.filter(entity =>
+      Object.keys(props).every(prop => {
         const key = prop;
         const value = props[prop] === 'id' ? props[prop].toString() : props[prop];
         const entityValue = entity.getIn([key], '');
@@ -45,16 +36,35 @@ export const selectEntitiesWhere = createSelector([getProps, getEntityType, getE
         }
 
         return entityValue === value;
-      }), null, Immutable.Map())
-  };
-});
+      }), null, Immutable.Map()
+    )
+  ));
+};
 
-export const selectEntityOrder = createSelector([getEntityOrder], (entityOrder) => ({
-  entityOrder
-}));
+export const createEntityOrderSelector = (entityType) => {
+  const getEntityOrder = createGetEntityOrder(entityType);
+  return createSelector([getEntityOrder], entityOrder => entityOrder);
+};
 
-export const selectOrderedEntities = createSelector([getEntityType, selectEntitiesWhere, getEntityOrder], getOrderedEntities);
+export const createOrderedEntitiesSelector = (entityType, entitiesSelector) => {
+  const getEntityOrder = createGetEntityOrder(entityType);
 
-export const selectPagination = createSelector([getPagination], (pagination) => ({
-  pagination
-}));
+  return createSelector([entitiesSelector, getEntityOrder], (entityHash, entityOrder) => (
+    Immutable.OrderedMap().withMutations(map => { // eslint-disable-line new-cap
+      entityOrder.forEach((entityId, index) => {
+        const entity = entityHash.get(entityId);
+
+        if (entity) {
+          map.set(index, entity);
+        }
+      });
+    })
+  ));
+};
+
+export const createPaginationSelector = (entityType) => {
+  const getPagination = createGetPagination(entityType);
+
+  return createSelector([getPagination], pagination => pagination);
+};
+

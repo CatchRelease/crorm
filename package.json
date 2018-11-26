@@ -1,6 +1,6 @@
 {
   "name": "crorm",
-  "version": "4.3.0",
+  "version": "5.0.0",
   "description": "Catch&Release ORM",
   "main": "dist/orm.js",
   "scripts": {
@@ -29,7 +29,6 @@
   "private": false,
   "dependencies": {
     "immutable": "^3.8.2",
-    "pluralize": "^7.0.0",
     "reselect": "^3.0.1"
   },
   "devDependencies": {

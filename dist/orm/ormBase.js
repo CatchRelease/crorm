@@ -3,10 +3,30 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.default = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-exports.default = function (recordProps) {
+var _immutable = require('immutable');
+
+var _reselect = require('reselect');
+
+var _orm = require('../orm');
+
+var _orm2 = _interopRequireDefault(_orm);
+
+var _ormSelectors = require('./ormSelectors');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _default(recordProps, _recordType) {
+  var EMPTY_PREDICATE = Object.freeze({});
   var builtIns = ['recordType', 'valid', 'updateProps', 'destroy', 'onCreate', 'onUpdate', 'onDestroy'];
 
   if (Object.keys(recordProps).some(function (prop) {
@@ -15,7 +35,18 @@ exports.default = function (recordProps) {
     throw new Error('Cannot redefine built in params: ' + builtIns.join(', ') + '.');
   }
 
-  return function (_Record) {
+  var selectEntities = (0, _ormSelectors.createEntitiesSelector)(_recordType);
+  var selectEntity = (0, _ormSelectors.createEntitySelector)(_recordType);
+  var selectEntitiesWhere = (0, _reselect.createSelector)([(0, _ormSelectors.createWhereSelector)(_recordType)], function (entities) {
+    return entities.toList();
+  });
+  var selectEntityOrder = (0, _ormSelectors.createEntityOrderSelector)(_recordType);
+  var selectPagination = (0, _ormSelectors.createPaginationSelector)(_recordType);
+  var selectOrderedEntities = (0, _reselect.createSelector)([(0, _ormSelectors.createOrderedEntitiesSelector)(_recordType, (0, _ormSelectors.createWhereSelector)(_recordType))], function (entities) {
+    return entities.toList();
+  });
+
+  var ORMBase = function (_Record) {
     _inherits(ORMBase, _Record);
 
     function ORMBase() {
@@ -26,12 +57,6 @@ exports.default = function (recordProps) {
 
     _createClass(ORMBase, [{
       key: 'valid',
-
-
-      // recordType() {
-      //   return this.constructor.name.toLowerCase();
-      // }
-
       value: function valid() {
         // eslint-disable-line class-methods-use-this
         return true;
@@ -86,123 +111,41 @@ exports.default = function (recordProps) {
     }, {
       key: 'recordType',
       value: function recordType() {
-        throw new Error('Please define a static recordType method on your model.');
+        return _recordType;
       }
     }, {
       key: 'order',
       value: function order() {
-        var immutable = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-        var entityType = this.recordType();
-        var entityOrder = (0, _ormSelectors.selectEntityOrder)(ORMBase.database(), { entityType: entityType });
-        var returnValue = void 0;
-
-        if (immutable) {
-          returnValue = entityOrder;
-        } else {
-          returnValue = entityOrder.entityOrder.toJS();
-        }
-
-        return returnValue;
+        return selectEntityOrder(ORMBase.database());
       }
     }, {
       key: 'ordered',
       value: function ordered() {
-        var _this2 = this;
+        var predicates = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : EMPTY_PREDICATE;
 
-        var entityType = this.recordType();
-        var entities = (0, _ormSelectors.selectOrderedEntities)(ORMBase.database(), { entityType: entityType });
-        var results = _immutable2.default.List();
-
-        if (!entities[(0, _pluralize2.default)(entityType)].isEmpty()) {
-          entities[(0, _pluralize2.default)(entityType)].forEach(function (entity) {
-            var newRecord = new _this2(entity);
-            results = results.push(newRecord);
-          });
-        }
-
-        return results;
+        return selectOrderedEntities(ORMBase.database(), predicates);
       }
     }, {
       key: 'pagination',
       value: function pagination() {
-        var immutable = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-        var entityType = this.recordType();
-        var pagination = (0, _ormSelectors.selectPagination)(ORMBase.database(), { entityType: entityType });
-        var returnValue = void 0;
-
-        if (immutable) {
-          returnValue = pagination;
-        } else {
-          returnValue = pagination.pagination.toJS();
-        }
-
-        return returnValue;
+        return selectPagination(ORMBase.database());
       }
     }, {
       key: 'findById',
       value: function findById() {
         var id = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
-        var entityType = this.recordType();
-        var entity = (0, _ormSelectors.selectEntity)(ORMBase.database(), { entityType: entityType, id: id.toString() });
-        var returnValue = new this({ id: id.toString() });
-
-        if (_orm2.default.Config.debug) {
-          console.log('Called method findById with ' + id);
-          console.log('EntityType:', this.recordType());
-          console.log('Database:', ORMBase.database().data.toJS());
-          console.log('Entity:', entity);
-        }
-
-        if (!entity[entityType].isEmpty()) {
-          if (_orm2.default.Config.debug) {
-            console.log('Entity is not empty', entity[entityType]);
-          }
-
-          returnValue = new this(entity[entityType]);
-        } else if (_orm2.default.Config.debug) {
-          console.log('Entity is empty');
-        }
-
-        return returnValue;
+        return selectEntity(ORMBase.database(), { id: id.toString() });
       }
     }, {
       key: 'all',
       value: function all() {
-        var _this3 = this;
-
-        var entityType = this.recordType();
-        var entities = (0, _ormSelectors.selectEntities)(ORMBase.database(), { entityType: entityType });
-        var results = _immutable2.default.Map();
-
-        if (!entities[(0, _pluralize2.default)(entityType)].isEmpty()) {
-          entities[(0, _pluralize2.default)(entityType)].forEach(function (entity, i) {
-            var entityId = entity.getIn(['id'], i);
-            results = results.set(entityId, new _this3(entity));
-          });
-        }
-
-        return results;
+        return selectEntities(ORMBase.database());
       }
     }, {
       key: 'where',
-      value: function where(props) {
-        var _this4 = this;
-
-        var entityType = this.recordType();
-        var propsWithType = Object.assign({}, props, { entityType: entityType });
-        var entities = (0, _ormSelectors.selectEntitiesWhere)(ORMBase.database(), propsWithType);
-        var results = _immutable2.default.List();
-
-        if (!entities[(0, _pluralize2.default)(entityType)].isEmpty()) {
-          entities[(0, _pluralize2.default)(entityType)].forEach(function (entity) {
-            results = results.push(new _this4(entity));
-          });
-        }
-
-        return results;
+      value: function where(predicates) {
+        return selectEntitiesWhere(ORMBase.database(), predicates);
       }
     }, {
       key: 'create',
@@ -220,26 +163,7 @@ exports.default = function (recordProps) {
 
     return ORMBase;
   }((0, _immutable.Record)(recordProps));
-};
 
-var _immutable = require('immutable');
-
-var _immutable2 = _interopRequireDefault(_immutable);
-
-var _pluralize = require('pluralize');
-
-var _pluralize2 = _interopRequireDefault(_pluralize);
-
-var _ormSelectors = require('./ormSelectors');
-
-var _orm = require('../orm');
-
-var _orm2 = _interopRequireDefault(_orm);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* eslint no-console: 0 */
+  return ORMBase;
+}
+exports.default = _default;

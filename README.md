@@ -140,13 +140,9 @@ To Add Debug Output: `ORM.Config.debug = true;`
 
 `order()` - Get an Immutable List of ids containing the server ordering for the current entityType.
 
-`order(true)` - Get an Immutable of the ordering for the current entityType in { entityOrder: Immutable.List } format.
-
-`ordered()` - Get an Immutable List of ordered instances for the current entityType.
+`ordered(props = {})` - Get an Immutable List of ordered instances for the current entityType.
 
 `pagination()` - Get the pagination for the current entityType. 
-
-`pagination(true)` - Get an Immutable of the pagination for the current entityType in { pagination: Immutable.Map } format.
 
 `findById(id)` - Get the instance matching the id for the entityType. Returns instance with empty Immutable.Map() when not found.
 
