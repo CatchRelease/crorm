@@ -17,14 +17,12 @@ ORM.Config.debug = true;
 // ----------------
 
 // Build your Model on top of the ORM. The object definition is the exact same as Immutable Records (https://facebook.github.io/immutable-js/docs/#/Record).
+// The second parameter is the recordType and is used to look up your model in the Redux store.
 class MyModel extends ORM.Base({
   id: null,
   myAttribute1: null,
   myAttribute2: null
-}) {
-  // `static recordType()` **is required** and is used to look up your model in the Redux store.
-  static recordType() { return 'myModel' };
-
+}, 'myModel') {
   // `valid()` allows you to define a custom validator for the model. Invalid models will
   // not call the updateProps method.
   valid() {
@@ -92,15 +90,16 @@ export default connect(mapStateToProps)(MyComponent);
 
 // Class Methods
 
-// The `order` method returns the id order of the Models as received from the server.
-// It's returned as an array by default but can be returned as immutable by passing true to the method.
+// The `recordType` method returns the recordType specified in the model definition.
+MyModel.recordType();
+
+// The `order` method returns an Immutable List of ids containing the order of the Models as received from the server.
 MyModel.order();
 
 // The `ordered` method returns an ordered Immutable List based upon the id order received from the server.
 MyModel.ordered();
 
-// The `pagiantion` method returns a Javascript Object that contains the pagination information returned from the server.
-// It can also be returned as an Immutable by passing true to the method.
+// The `pagiantion` method returns the pagination information returned from the server.
 MyModel.pagination();
 
 // The `findById` method returns a single instance of the Model Type with the data set if found or an empty version of the Model Type otherwise.

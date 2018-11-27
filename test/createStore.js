@@ -1,22 +1,23 @@
 import Immutable from 'immutable';
 import { createStore, combineReducers } from 'redux';
+import { Shot } from './models';
 
 // Setup Redux Store
 export const initialState = Immutable.fromJS({
   entities: {
     shot: {
-      1234: {
+      1234: new Shot({
         id: '1234',
         projectId: '1'
-      },
-      2345: {
+      }),
+      2345: new Shot({
         id: '2345',
         projectId: '1'
-      },
-      3456: {
+      }),
+      3456: new Shot({
         id: '3456',
         projectId: '2'
-      }
+      })
     }
   },
   entityOrder: {
