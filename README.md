@@ -61,9 +61,7 @@ export default connect(mapsStateToProps, mapDispatchToProps)(HeroCard);
 import ORM from 'crorm';
 import { actions } from 'heroActions';
 
-export class Hero extends ORM.Base({ id: null }) {
-  static recordType() { return 'hero'; };
-
+export class Hero extends ORM.Base({ id: null }, 'hero') {
   onDestroy(hero, dispatch) {
     dispatch(actions.destroyHero(hero.id));
   }
@@ -136,7 +134,7 @@ To Add Debug Output: `ORM.Config.debug = true;`
 
 `dispatch()` - Get the Redux Store dispatch function.
 
-`recordType()` - Override in your model. Should be the name of your model in redux, i.e. 'hero'.
+`recordType()` - Get the name of your model in redux, i.e. 'hero'.
 
 `order()` - Get an Immutable List of ids containing the server ordering for the current entityType.
 
