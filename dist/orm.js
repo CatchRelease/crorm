@@ -1,24 +1,20 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.default = void 0;
 
-var _ormBase = require('./orm/ormBase');
+var _ormBase = _interopRequireDefault(require("./orm/ormBase"));
 
-var _ormBase2 = _interopRequireDefault(_ormBase);
-
-var _ormConfig = require('./orm/ormConfig');
-
-var _ormConfig2 = _interopRequireDefault(_ormConfig);
+var _ormConfig = _interopRequireDefault(require("./orm/ormConfig"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var config = new _ormConfig2.default();
-
+var config = new _ormConfig.default();
 var ORM = {
   Config: config,
-  Base: _ormBase2.default
+  Base: _ormBase.default
 };
-
-exports.default = ORM;
+var _default = ORM;
+exports.default = _default;

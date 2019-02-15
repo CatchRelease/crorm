@@ -25,18 +25,17 @@ export const createWhereSelector = (entityType) => {
   const getEntities = createGetEntities(entityType);
 
   return createSelector([getProps, getEntities], (props, entities) => (
-    entities.filter(entity =>
-      Object.keys(props).every(prop => {
-        const key = prop;
-        const value = props[prop] === 'id' ? props[prop].toString() : props[prop];
-        const entityValue = entity.getIn([key], '');
+    entities.filter(entity => Object.keys(props).every(prop => {
+      const key = prop;
+      const value = props[prop] === 'id' ? props[prop].toString() : props[prop];
+      const entityValue = entity.getIn([key], '');
 
-        if (Array.isArray(value)) {
-          return value.includes(entityValue);
-        }
+      if (Array.isArray(value)) {
+        return value.includes(entityValue);
+      }
 
-        return entityValue === value;
-      }), null, Immutable.Map()
+      return entityValue === value;
+    }), null, Immutable.Map()
     )
   ));
 };
@@ -67,4 +66,3 @@ export const createPaginationSelector = (entityType) => {
 
   return createSelector([getPagination], pagination => pagination);
 };
-
