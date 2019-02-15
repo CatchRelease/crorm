@@ -20,7 +20,7 @@ describe('ORMBase', () => {
 
   describe('Base Class', () => {
     describe('valid', () => {
-      test('exsts', () => {
+      test('exists', () => {
         expect(ORM.Base).toBeDefined();
       });
     });
@@ -505,10 +505,8 @@ describe('ORMBase', () => {
             expect(onUpdateSpy.mock.calls[0][1]).toEqual(updateProps);
           });
 
-          test('returns a different instance', () => {
-            expect(updateResult).toBeInstanceOf(Shot);
-            expect(updateResult).not.toBe(shot);
-            expect(updateResult.projectId).toBe('123');
+          test('returns whatever the onUpdate method returns', () => {
+            expect(updateResult).toEqual(onUpdateSpy());
           });
         });
 
@@ -520,17 +518,15 @@ describe('ORMBase', () => {
             onUpdateSpy.mockReset();
 
             updateProps = { projectId: '3432' };
-            updateResult = invalidShot.updateProps(updateProps);
+          });
+
+          test('returns a rejected promise', () => {
+            expect(invalidShot.updateProps(updateProps)).rejects.toThrow('record invalid!');
           });
 
           test('does not call the onUpdate method', () => {
+            invalidShot.updateProps(updateProps).catch(() => null);
             expect(onUpdateSpy).toHaveBeenCalledTimes(0);
-          });
-
-          test('returns the same instance', () => {
-            expect(updateResult).toBeInstanceOf(Shot);
-            expect(updateResult).toBe(invalidShot);
-            expect(updateResult.projectId).toBeNull();
           });
         });
       });
@@ -555,9 +551,8 @@ describe('ORMBase', () => {
           expect(onDestroySpy.mock.calls[0][0]).toBe(destroyedShot);
         });
 
-        test('returns a different instance', () => {
-          expect(destroyedShotResult).toBeInstanceOf(Shot);
-          expect(destroyedShotResult).not.toBe(destroyedShot);
+        test('returns whatever the onDestroy method returns', () => {
+          expect(destroyedShotResult).toEqual(onDestroySpy());
         });
       });
     });

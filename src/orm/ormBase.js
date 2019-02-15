@@ -10,6 +10,7 @@ import {
   createPaginationSelector,
   createWhereSelector
 } from './ormSelectors';
+import { RecordInvalidError } from './ormErrors';
 
 export default function(recordProps, recordType) {
   const EMPTY_PREDICATE = Object.freeze({});
@@ -77,33 +78,29 @@ export default function(recordProps, recordType) {
     }
 
     updateProps(props = {}) {
-      const updateProps = Object.assign({}, props);
-      let returnInstance = this;
-
       if (this.valid()) {
-        this.onUpdate(this, updateProps, ORMBase.dispatch());
-        returnInstance = this.merge(updateProps);
+        const updateProps = Object.assign({}, props);
+
+        return this.onUpdate(this, updateProps, ORMBase.dispatch());
       }
 
-      return returnInstance;
+      return Promise.reject(new RecordInvalidError('record invalid!'));
     }
 
     destroy() {
-      this.onDestroy(this, ORMBase.dispatch());
-
-      return this.clear();
+      return this.onDestroy(this, ORMBase.dispatch());
     }
 
     onCreate() {
       return this;
     }
 
-    onUpdate() {
-      return this;
+    onUpdate(_record, props) {
+      return Promise.resolve(this.merge(props));
     }
 
     onDestroy() {
-      return this;
+      return Promise.resolve(this.clear());
     }
   }
 
