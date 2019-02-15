@@ -1,8 +1,8 @@
 import ORM from '../src/orm';
 
-export const onCreateSpy = jest.fn();
-export const onUpdateSpy = jest.fn();
-export const onDestroySpy = jest.fn();
+export const onCreateSpy = jest.fn().mockReturnValue('finish create');
+export const onUpdateSpy = jest.fn().mockReturnValue('finish update');
+export const onDestroySpy = jest.fn().mockReturnValue('finish destroy');
 
 export class Shot extends ORM.Base({
   id: null,
@@ -13,15 +13,15 @@ export class Shot extends ORM.Base({
   }
 
   onCreate(shot, attributes, dispatch) { // eslint-disable-line class-methods-use-this
-    onCreateSpy(shot, attributes);
+    return onCreateSpy(shot, attributes);
   }
 
   onUpdate(shot, attributes, dispatch) { // eslint-disable-line class-methods-use-this
-    onUpdateSpy(shot, attributes);
+    return onUpdateSpy(shot, attributes);
   }
 
   onDestroy(shot, dispatch) { // eslint-disable-line class-methods-use-this
-    onDestroySpy(shot);
+    return onDestroySpy(shot);
   }
 }
 
