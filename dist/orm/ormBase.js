@@ -17,6 +17,8 @@ var _orm2 = _interopRequireDefault(_orm);
 
 var _ormSelectors = require('./ormSelectors');
 
+var _ormErrors = require('./ormErrors');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -66,22 +68,18 @@ function _default(recordProps, _recordType) {
       value: function updateProps() {
         var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-        var updateProps = Object.assign({}, props);
-        var returnInstance = this;
-
         if (this.valid()) {
-          this.onUpdate(this, updateProps, ORMBase.dispatch());
-          returnInstance = this.merge(updateProps);
+          var updateProps = Object.assign({}, props);
+
+          return this.onUpdate(this, updateProps, ORMBase.dispatch());
         }
 
-        return returnInstance;
+        return Promise.reject(new _ormErrors.RecordInvalidError('record invalid!'));
       }
     }, {
       key: 'destroy',
       value: function destroy() {
-        this.onDestroy(this, ORMBase.dispatch());
-
-        return this.clear();
+        return this.onDestroy(this, ORMBase.dispatch());
       }
     }, {
       key: 'onCreate',
@@ -90,13 +88,13 @@ function _default(recordProps, _recordType) {
       }
     }, {
       key: 'onUpdate',
-      value: function onUpdate() {
-        return this;
+      value: function onUpdate(_record, props) {
+        return Promise.resolve(this.merge(props));
       }
     }, {
       key: 'onDestroy',
       value: function onDestroy() {
-        return this;
+        return Promise.resolve(this.clear());
       }
     }], [{
       key: 'database',
