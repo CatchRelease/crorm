@@ -2,7 +2,7 @@ import Immutable from 'immutable';
 
 import ORM from '../src/orm';
 import { store } from './createStore';
-import { Shot, Project, onCreateSpy, onDestroySpy, onUpdateSpy } from './models';
+import { Shot, Project, onCreateSpy } from './models';
 
 ORM.Config.database = store;
 ORM.Config.debug = false;
@@ -66,6 +66,120 @@ describe('ORMBase', () => {
           test('method exists', () => {
             expect(Base[method]).toBeInstanceOf(Function);
           });
+        });
+      });
+    });
+
+    describe('Instance Methods', () => {
+      describe('valid', () => {
+        test('always returns true', () => {
+          const record = new Base();
+
+          expect(record.valid()).toBeTruthy();
+        });
+      });
+
+      describe('updateProps', () => {
+        const props = { foo: '123' };
+        const record = new Base();
+        const mockOnUpdateResult = 'update result';
+        let onUpdateSpy;
+
+        beforeEach(() => {
+          onUpdateSpy = jest.spyOn(record, 'onUpdate').mockReturnValue(mockOnUpdateResult);
+        });
+
+        afterEach(() => {
+          onUpdateSpy.mockRestore();
+        });
+
+        describe('valid instance', () => {
+          test('calls the onUpdate method', () => {
+            record.updateProps(props);
+
+            expect(onUpdateSpy).toHaveBeenCalledTimes(1);
+            expect(onUpdateSpy).toHaveBeenCalledWith(Base.dispatch(), props);
+          });
+
+          test('returns whatever the onUpdate method returns', () => {
+            expect(record.updateProps(props)).toEqual(mockOnUpdateResult);
+          });
+        });
+
+        describe('invalid instance', () => {
+          let validSpy;
+
+          beforeEach(() => {
+            validSpy = jest.spyOn(record, 'valid').mockReturnValue(false);
+          });
+
+          afterEach(() => {
+            validSpy.mockRestore();
+          });
+
+          test('returns a rejected promise', () => {
+            expect(record.updateProps(props)).rejects.toThrow('record invalid!');
+          });
+
+          test('does not call the onUpdate method', () => {
+            record.updateProps(props).catch(() => null);
+            expect(onUpdateSpy).toHaveBeenCalledTimes(0);
+          });
+        });
+      });
+
+      describe('destroy', () => {
+        const record = new Base();
+        const mockOnDestroyResult = 'destroy result';
+        let onDestroySpy;
+
+        beforeEach(() => {
+          onDestroySpy = jest.spyOn(record, 'onDestroy').mockReturnValue(mockOnDestroyResult);
+        });
+
+        afterEach(() => {
+          onDestroySpy.mockRestore();
+        });
+
+        // test('sets the destroyed prop to true', () => {
+        //   expect(record._destroyed).toBeTruthy();
+        // });
+
+        test('calls the onDestroy method', () => {
+          record.destroy();
+
+          expect(onDestroySpy).toHaveBeenCalledTimes(1);
+        });
+
+        test('returns whatever the onDestroy method returns', () => {
+          expect(record.destroy()).toEqual(mockOnDestroyResult);
+        });
+      });
+
+      describe('onCreate', () => {
+        test('returns the record', () => {
+          const record = new Base();
+
+          return expect(record.onCreate()).resolves.toBe(record);
+        });
+      });
+
+      describe('onUpdate', () => {
+        test('returns the updated record', () => {
+          class Custom extends ORM.Base({ id: '' }, 'custom') {}
+
+          const record = new Custom();
+
+          return expect(record.onUpdate(null, { id: 12 }))
+            .resolves.toEqual(record.merge({ id: 12 }));
+        });
+      });
+
+      describe('onDestroy', () => {
+        test('returns the updated record', () => {
+          const record = new Base();
+
+          return expect(record.onDestroy()).resolves.toBe(record.clear());
         });
       });
     });
@@ -418,141 +532,40 @@ describe('ORMBase', () => {
       });
 
       describe('create', () => {
-        let shot;
-
         describe('with attributes', () => {
-          let attributes;
+          const attributes = { projectId: 5 };
 
           beforeEach(() => {
-            onCreateSpy.mockReset();
-
-            attributes = { projectId: 5 };
-            shot = Shot.create(attributes);
+            onCreateSpy.mockClear();
           });
 
-          test('creates a Shot', () => {
-            expect(shot).toBeInstanceOf(Shot);
-          });
-
-          test('sets the attribute', () => {
-            expect(shot.projectId).toEqual(5);
+          test('returns whatever the onCreate handler returns', () => {
+            expect(Shot.create(attributes)).toEqual('finish create');
           });
 
           test('calls the onCreate method', () => {
+            Shot.create(attributes);
+
             expect(onCreateSpy).toHaveBeenCalledTimes(1);
-            expect(onCreateSpy.mock.calls[0][0]).toBe(shot);
-            expect(onCreateSpy.mock.calls[0][1]).toBe(attributes);
+            expect(onCreateSpy).toHaveBeenCalledWith(Base.dispatch(), attributes);
           });
         });
 
         describe('without attributes', () => {
           beforeEach(() => {
-            onCreateSpy.mockReset();
-
-            shot = Shot.create();
+            onCreateSpy.mockClear();
           });
 
-          test('creates a Shot', () => {
-            expect(shot).toBeInstanceOf(Shot);
+          test('returns whatever the onCreate handler returns', () => {
+            expect(Shot.create()).toEqual('finish create');
           });
 
           test('calls the onCreate method', () => {
+            Shot.create();
+
             expect(onCreateSpy).toHaveBeenCalledTimes(1);
-            expect(onCreateSpy.mock.calls[0][0]).toBe(shot);
-            expect(onCreateSpy.mock.calls[0][1]).toEqual({});
+            expect(onCreateSpy).toHaveBeenCalledWith(Base.dispatch(), {});
           });
-        });
-      });
-    });
-
-    describe('Instance Methods', () => {
-      let shot;
-
-      beforeEach(() => {
-        shot = Shot.create({ id: 22, projectId: 42 });
-      });
-
-      describe('valid', () => {
-        describe('has project id', () => {
-          test('returns true', () => {
-            expect(shot.valid()).toBeTruthy();
-          });
-        });
-
-        describe('no project id', () => {
-          test('returns false', () => {
-            const projectlessShot = Shot.create();
-            expect(projectlessShot.valid()).toBeFalsy();
-          });
-        });
-      });
-
-      describe('updateProps', () => {
-        let updateProps;
-        let updateResult;
-
-        describe('valid instance', () => {
-          beforeEach(() => {
-            onUpdateSpy.mockReset();
-
-            updateProps = { projectId: '123' };
-            updateResult = shot.updateProps(updateProps);
-          });
-
-          test('calls the onUpdate method', () => {
-            expect(onUpdateSpy).toHaveBeenCalledTimes(1);
-            expect(onUpdateSpy.mock.calls[0][0]).toBe(shot);
-            expect(onUpdateSpy.mock.calls[0][1]).toEqual(updateProps);
-          });
-
-          test('returns whatever the onUpdate method returns', () => {
-            expect(updateResult).toEqual(onUpdateSpy());
-          });
-        });
-
-        describe('invalid instance', () => {
-          let invalidShot;
-
-          beforeEach(() => {
-            invalidShot = Shot.create();
-            onUpdateSpy.mockReset();
-
-            updateProps = { projectId: '3432' };
-          });
-
-          test('returns a rejected promise', () => {
-            expect(invalidShot.updateProps(updateProps)).rejects.toThrow('record invalid!');
-          });
-
-          test('does not call the onUpdate method', () => {
-            invalidShot.updateProps(updateProps).catch(() => null);
-            expect(onUpdateSpy).toHaveBeenCalledTimes(0);
-          });
-        });
-      });
-
-      describe('destroy', () => {
-        let destroyedShot;
-        let destroyedShotResult;
-
-        beforeEach(() => {
-          onDestroySpy.mockReset();
-          destroyedShot = Shot.create({ projectId: 55 });
-
-          destroyedShotResult = destroyedShot.destroy();
-        });
-
-        // test('sets the destroyed prop to true', () => {
-        //   expect(destroyedShot._destroyed).toBeTruthy();
-        // });
-
-        test('calls the onDestroy method', () => {
-          expect(onDestroySpy).toHaveBeenCalledTimes(1);
-          expect(onDestroySpy.mock.calls[0][0]).toBe(destroyedShot);
-        });
-
-        test('returns whatever the onDestroy method returns', () => {
-          expect(destroyedShotResult).toEqual(onDestroySpy());
         });
       });
     });
