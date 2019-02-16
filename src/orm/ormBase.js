@@ -65,12 +65,9 @@ export default function(recordProps, recordType) {
     }
 
     static create(attributes = {}) {
-      const model = new this(Object.assign({}, attributes));
-      const dispatch = ORMBase.dispatch();
+      const model = new this({ ...attributes });
 
-      model.onCreate(model, attributes, dispatch);
-
-      return model;
+      return model.onCreate(ORMBase.dispatch(), attributes);
     }
 
     valid() { // eslint-disable-line class-methods-use-this
@@ -79,24 +76,24 @@ export default function(recordProps, recordType) {
 
     updateProps(props = {}) {
       if (this.valid()) {
-        const updateProps = Object.assign({}, props);
-
-        return this.onUpdate(this, updateProps, ORMBase.dispatch());
+        return this.onUpdate(ORMBase.dispatch(), { ...props });
       }
 
       return Promise.reject(new RecordInvalidError('record invalid!'));
     }
 
     destroy() {
-      return this.onDestroy(this, ORMBase.dispatch());
+      return this.onDestroy(ORMBase.dispatch());
     }
 
     onCreate() {
-      return this;
+      return Promise.resolve(this);
     }
 
-    onUpdate(_record, props) {
-      return Promise.resolve(this.merge(props));
+    onUpdate(_dispatch, props) {
+      const updatedRecord = this.merge(props);
+
+      return Promise.resolve(updatedRecord);
     }
 
     onDestroy() {

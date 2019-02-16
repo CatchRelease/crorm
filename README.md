@@ -160,11 +160,11 @@ To Add Debug Output: `ORM.Config.debug = true;`
 
 `destroy()` - Marks the current model as destroyed and returns a "destroyed" instance. Calls an onDestroy to be overridden to save on the backend and update the store.
 
-`onCreate(instance, createProps, dispatch)` - Override to define what happens on create.
+`onCreate(dispatch, createProps)` - Override to define what happens on create.
 
-`onUpdate(instance, updateProps, dispatch)` - Override to define what happens on update.
+`onUpdate(dispatch, updateProps)` - Override to define what happens on update.
 
-`onDestroy(instance, dispatch)` - Override to define what happens on destroy.
+`onDestroy(dispatch)` - Override to define what happens on destroy.
 
 ### Pushing a New Version
 
