@@ -300,7 +300,7 @@ describe('ORMBase', () => {
 
           describe('basic', () => {
             test('returns the memoized result', () => {
-              expect(Shot.ordered()).toEqual(ordered);
+              expect(Shot.ordered()).toBe(ordered);
             });
           });
 
@@ -309,13 +309,13 @@ describe('ORMBase', () => {
               // calling all on a different entity should not invalidate the cache
               Project.ordered();
 
-              expect(Shot.ordered()).toEqual(ordered);
+              expect(Shot.ordered()).toBe(ordered);
             });
           });
 
           describe('predicate changes', () => {
             test('returns different result', () => {
-              expect(Shot.ordered({ predicate: '1' })).not.toEqual(ordered);
+              expect(Shot.ordered({ predicate: '1' })).not.toBe(ordered);
             });
           });
         });
@@ -341,7 +341,7 @@ describe('ORMBase', () => {
         describe('memoization', () => {
           describe('basic', () => {
             test('returns the memoized result', () => {
-              expect(Shot.pagination()).toEqual(pagination);
+              expect(Shot.pagination()).toBe(pagination);
             });
           });
 
@@ -349,7 +349,7 @@ describe('ORMBase', () => {
             test('returns the memoized result', () => {
               Project.pagination();
 
-              expect(Shot.pagination()).toEqual(pagination);
+              expect(Shot.pagination()).toBe(pagination);
             });
           });
         });
@@ -385,7 +385,7 @@ describe('ORMBase', () => {
 
           describe('basic', () => {
             test('returns the memoized result', () => {
-              expect(Shot.findById(1234)).toEqual(shot);
+              expect(Shot.findById(1234)).toBe(shot);
             });
           });
 
@@ -394,7 +394,7 @@ describe('ORMBase', () => {
               // calling the method on a different entity should not invalidate the cache
               Project.findById(1234);
 
-              expect(Shot.findById(1234)).toEqual(shot);
+              expect(Shot.findById(1234)).toBe(shot);
             });
           });
 
@@ -402,7 +402,7 @@ describe('ORMBase', () => {
             test('returns different result', () => {
               const newShot = Shot.findById(2345);
 
-              expect(newShot).not.toEqual(shot);
+              expect(newShot).not.toBe(shot);
               expect(newShot).toBeInstanceOf(Shot);
             });
           });
@@ -433,7 +433,7 @@ describe('ORMBase', () => {
         describe('memoization', () => {
           describe('basic', () => {
             test('returns the memoized result', () => {
-              expect(Shot.all()).toEqual(shots);
+              expect(Shot.all()).toBe(shots);
             });
           });
 
@@ -442,7 +442,7 @@ describe('ORMBase', () => {
               // calling the method on a different entity should not invalidate the cache
               Project.all();
 
-              expect(Shot.all()).toEqual(shots);
+              expect(Shot.all()).toBe(shots);
             });
           });
         });
@@ -516,7 +516,7 @@ describe('ORMBase', () => {
 
           describe('basic', () => {
             test('returns the memoized result', () => {
-              expect(Shot.where(predicate)).toEqual(results);
+              expect(Shot.where(predicate)).toBe(results);
             });
           });
 
@@ -525,7 +525,7 @@ describe('ORMBase', () => {
               // calling the method on a different entity should not invalidate the cache
               Project.where(predicate);
 
-              expect(Shot.where(predicate)).toEqual(results);
+              expect(Shot.where(predicate)).toBe(results);
             });
           });
         });
