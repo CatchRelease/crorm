@@ -11,8 +11,15 @@ var _reselect = require("reselect");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var getProps = function getProps(state, props) {
-  return props;
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+var getProps = function getProps(state, _ref) {
+  var key = _ref.key,
+      rest = _objectWithoutProperties(_ref, ["key"]);
+
+  return rest;
 };
 
 var getId = function getId(state, props) {
@@ -20,8 +27,8 @@ var getId = function getId(state, props) {
 };
 
 var createGetPagination = function createGetPagination(entityType) {
-  return function (state) {
-    return state.data.getIn(['pagination', entityType], _immutable.default.Map()) || _immutable.default.Map();
+  return function (state, props) {
+    return state.data.getIn(['pagination', entityType, props.key || entityType], _immutable.default.Map()) || _immutable.default.Map();
   };
 };
 
@@ -32,8 +39,8 @@ var createGetEntities = function createGetEntities(entityType) {
 };
 
 var createGetEntityOrder = function createGetEntityOrder(entityType) {
-  return function (state) {
-    return state.data.getIn(['entityOrder', entityType], _immutable.default.List()) || _immutable.default.List();
+  return function (state, props) {
+    return state.data.getIn(['entityOrder', entityType, props.key || entityType], _immutable.default.List()) || _immutable.default.List();
   };
 };
 

@@ -240,18 +240,24 @@ describe('ORMBase', () => {
       });
 
       describe('order', () => {
-        test('returns the order immutable', () => {
-          expect(Shot.order(true)).toEqual(Immutable.List(['2345', '3456', '1234']));
+        describe('default order key', () => {
+          test('returns the order immutable', () => {
+            expect(Shot.order()).toEqual(Immutable.List(['2345', '3456']));
+          });
+        });
+
+        describe('custom order key', () => {
+          test('returns the order immutable', () => {
+            expect(Shot.order({ key: 'collection_shot' })).toEqual(Immutable.List(['3456', '1234']));
+          });
         });
       });
 
       describe('ordered', () => {
-        let order;
         let ordered;
 
-        describe('without filter', () => {
+        describe('default behavior', () => {
           beforeEach(() => {
-            order = Shot.order();
             ordered = Shot.ordered();
           });
 
@@ -264,11 +270,31 @@ describe('ORMBase', () => {
           });
 
           test('returns ordered shots', () => {
-            expect(ordered.map(shot => shot.id)).toEqual(Immutable.List(['2345', '3456', '1234']));
+            expect(ordered.map(shot => shot.id)).toEqual(Immutable.List(['2345', '3456']));
+          });
+        });
+
+        describe('with order key', () => {
+          beforeEach(() => {
+            ordered = Shot.ordered({ key: 'collection_shot' });
+          });
+
+          test('returns an Immutable List', () => {
+            expect(ordered).toBeInstanceOf(Immutable.List);
+          });
+
+          test('returns Shot instances', () => {
+            expect(ordered.first()).toBeInstanceOf(Shot);
+          });
+
+          test('returns ordered shots', () => {
+            expect(ordered.map(shot => shot.id)).toEqual(Immutable.List(['3456', '1234']));
           });
         });
 
         describe('with filter', () => {
+          let order;
+
           beforeEach(() => {
             order = Shot.order();
             ordered = Shot.ordered({ projectId: '1' });
@@ -324,21 +350,45 @@ describe('ORMBase', () => {
       describe('pagination', () => {
         let pagination;
 
-        beforeEach(() => {
-          pagination = Shot.pagination();
-        });
-
-        describe('results', () => {
-          test('returns an object', () => {
-            expect(pagination).toBeInstanceOf(Object);
+        describe('default behavior', () => {
+          beforeEach(() => {
+            pagination = Shot.pagination();
           });
 
-          test('returns the Shot pagination', () => {
-            expect(pagination.toJS().current_page).toBe(1);
+          test('returns the pagination', () => {
+            expect(pagination).toEqual(Immutable.fromJS({
+              previous_page: null,
+              next_page: 2,
+              current_page: 1,
+              total_pages: 3,
+              total_count: 111,
+              count: 50
+            }));
+          });
+        });
+
+        describe('with order key', () => {
+          beforeEach(() => {
+            pagination = Shot.pagination({ key: 'collection_shot' });
+          });
+
+          test('returns the pagination', () => {
+            expect(pagination).toEqual(Immutable.fromJS({
+              previous_page: null,
+              next_page: 2,
+              current_page: 1,
+              total_pages: 5,
+              total_count: 10,
+              count: 2
+            }));
           });
         });
 
         describe('memoization', () => {
+          beforeEach(() => {
+            pagination = Shot.pagination();
+          });
+
           describe('basic', () => {
             test('returns the memoized result', () => {
               expect(Shot.pagination()).toBe(pagination);
