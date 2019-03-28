@@ -21,16 +21,29 @@ export const initialState = Immutable.fromJS({
     }
   },
   entityOrder: {
-    shot: ['2345', '3456', '1234']
+    shot: {
+      shot: ['2345', '3456'],
+      collection_shot: ['3456', '1234']
+    }
   },
   pagination: {
     shot: {
-      previous_page: null,
-      next_page: 2,
-      current_page: 1,
-      total_pages: 3,
-      total_count: 111,
-      count: 50
+      shot: {
+        previous_page: null,
+        next_page: 2,
+        current_page: 1,
+        total_pages: 3,
+        total_count: 111,
+        count: 50
+      },
+      collection_shot: {
+        previous_page: null,
+        next_page: 2,
+        current_page: 1,
+        total_pages: 5,
+        total_count: 10,
+        count: 2
+      }
     }
   }
 });

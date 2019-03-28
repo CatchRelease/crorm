@@ -127,7 +127,8 @@ function _default(recordProps, _recordType) {
     }, {
       key: "order",
       value: function order() {
-        return selectEntityOrder(ORMBase.database());
+        var predicates = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : EMPTY_PREDICATE;
+        return selectEntityOrder(ORMBase.database(), predicates);
       }
     }, {
       key: "ordered",
@@ -138,7 +139,8 @@ function _default(recordProps, _recordType) {
     }, {
       key: "pagination",
       value: function pagination() {
-        return selectPagination(ORMBase.database());
+        var predicates = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : EMPTY_PREDICATE;
+        return selectPagination(ORMBase.database(), predicates);
       }
     }, {
       key: "findById",

@@ -40,16 +40,16 @@ export default function(recordProps, recordType) {
       return recordType;
     }
 
-    static order() {
-      return selectEntityOrder(ORMBase.database());
+    static order(predicates = EMPTY_PREDICATE) {
+      return selectEntityOrder(ORMBase.database(), predicates);
     }
 
     static ordered(predicates = EMPTY_PREDICATE) {
       return selectOrderedEntities(ORMBase.database(), predicates);
     }
 
-    static pagination() {
-      return selectPagination(ORMBase.database());
+    static pagination(predicates = EMPTY_PREDICATE) {
+      return selectPagination(ORMBase.database(), predicates);
     }
 
     static findById(id = '') {

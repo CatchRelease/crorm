@@ -1,11 +1,11 @@
 import Immutable from 'immutable';
 import { createSelector } from 'reselect';
 
-const getProps = (state, props) => props;
+const getProps = (state, { key, ...rest }) => rest;
 const getId = (state, props) => props.id;
-const createGetPagination = (entityType) => (state) => (state.data.getIn(['pagination', entityType], Immutable.Map()) || Immutable.Map());
+const createGetPagination = (entityType) => (state, props) => (state.data.getIn(['pagination', entityType, props.key || entityType], Immutable.Map()) || Immutable.Map());
 const createGetEntities = (entityType) => (state) => (state.data.getIn(['entities', entityType], Immutable.Map()) || Immutable.Map());
-const createGetEntityOrder = (entityType) => (state) => (state.data.getIn(['entityOrder', entityType], Immutable.List()) || Immutable.List());
+const createGetEntityOrder = (entityType) => (state, props) => (state.data.getIn(['entityOrder', entityType, props.key || entityType], Immutable.List()) || Immutable.List());
 
 export const createEntitySelector = (entityType) => {
   const getEntities = createGetEntities(entityType);
