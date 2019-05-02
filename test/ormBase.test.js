@@ -599,6 +599,13 @@ describe('ORMBase', () => {
             expect(onCreateSpy).toHaveBeenCalledTimes(1);
             expect(onCreateSpy).toHaveBeenCalledWith(Base.dispatch(), attributes);
           });
+
+          test('passes any additional arguments alon to onCreate', () => {
+            const reducerParams = { orderKey: 'myKey' };
+            Shot.create(attributes, reducerParams);
+
+            expect(onCreateSpy).toHaveBeenCalledWith(Base.dispatch(), attributes, reducerParams);
+          });
         });
 
         describe('without attributes', () => {

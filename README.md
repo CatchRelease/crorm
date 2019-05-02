@@ -148,7 +148,7 @@ To Add Debug Output: `ORM.Config.debug = true;`
 
 `where(props = {})` - Get the instances where all props are matching.
 
-`create(props = {})` - Create an instance with the passed in props. Call an onCreate method to be overridden for server save and state update.
+`create(props = {})` - Create an instance with the passed in props. Call an onCreate method to be overridden for server save and state update. Any additional arguments passed to create will be passed down to onCreate.
 
 ##### Instance Methods
 

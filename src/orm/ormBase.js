@@ -64,10 +64,10 @@ export default function(recordProps, recordType) {
       return selectEntitiesWhere(ORMBase.database(), predicates);
     }
 
-    static create(attributes = {}) {
+    static create(attributes = {}, ...rest) {
       const model = new this({ ...attributes });
 
-      return model.onCreate(ORMBase.dispatch(), attributes);
+      return model.onCreate(ORMBase.dispatch(), attributes, ...rest);
     }
 
     valid() { // eslint-disable-line class-methods-use-this
