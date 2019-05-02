@@ -165,7 +165,12 @@ function _default(recordProps, _recordType) {
       value: function create() {
         var attributes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
         var model = new this(_objectSpread({}, attributes));
-        return model.onCreate(ORMBase.dispatch(), attributes);
+
+        for (var _len = arguments.length, rest = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+          rest[_key - 1] = arguments[_key];
+        }
+
+        return model.onCreate.apply(model, [ORMBase.dispatch(), attributes].concat(rest));
       }
     }]);
 
