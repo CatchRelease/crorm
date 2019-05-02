@@ -4,11 +4,21 @@ import { createSelector } from 'reselect';
 const getProps = (state, { key, ...rest }) => rest;
 const getId = (state, props) => props.id;
 const createGetPagination = (entityType) => (state, props) => (state.data.getIn(['pagination', entityType, props.key || entityType], Immutable.Map()) || Immutable.Map());
-const createGetEntities = (entityType) => (state) => (state.data.getIn(['entities', entityType], Immutable.Map()) || Immutable.Map());
+
+const createGetEntities = (entityType, filterAttribute, filterValue) => (state) => {
+  const entities = state.data.getIn(['entities', entityType], Immutable.Map()) || Immutable.Map();
+
+  if (filterAttribute && filterValue) {
+    return entities.filter(entity => entity.get(filterAttribute) === filterValue);
+  }
+
+  return entities;
+};
+
 const createGetEntityOrder = (entityType) => (state, props) => (state.data.getIn(['entityOrder', entityType, props.key || entityType], Immutable.List()) || Immutable.List());
 
-export const createEntitySelector = (entityType) => {
-  const getEntities = createGetEntities(entityType);
+export const createEntitySelector = (entityType, filterAttribute, filterValue) => {
+  const getEntities = createGetEntities(entityType, filterAttribute, filterValue);
 
   return createSelector([getId, getEntities], (id, entities) => (
     entities.find(entity => entity.get('id', '').toString() === id.toString(), null, null)
@@ -21,8 +31,8 @@ export const createEntitiesSelector = (entityType) => {
   return createSelector([getEntities], (entities) => entities);
 };
 
-export const createWhereSelector = (entityType) => {
-  const getEntities = createGetEntities(entityType);
+export const createWhereSelector = (entityType, filterAttribute, filterValue) => {
+  const getEntities = createGetEntities(entityType, filterAttribute, filterValue);
 
   return createSelector([getProps, getEntities], (props, entities) => (
     entities.filter(entity => Object.keys(props).every(prop => {
