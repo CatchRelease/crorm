@@ -9,7 +9,7 @@ var _immutable = _interopRequireDefault(require("immutable"));
 
 var _reselect = require("reselect");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 
@@ -28,19 +28,19 @@ var getId = function getId(state, props) {
 
 var createGetPagination = function createGetPagination(entityType) {
   return function (state, props) {
-    return state.data.getIn(['pagination', entityType, props.key || entityType], _immutable.default.Map()) || _immutable.default.Map();
+    return state.data.getIn(['pagination', entityType, props.key || entityType], _immutable["default"].Map()) || _immutable["default"].Map();
   };
 };
 
 var createGetEntities = function createGetEntities(entityType) {
   return function (state) {
-    return state.data.getIn(['entities', entityType], _immutable.default.Map()) || _immutable.default.Map();
+    return state.data.getIn(['entities', entityType], _immutable["default"].Map()) || _immutable["default"].Map();
   };
 };
 
 var createGetEntityOrder = function createGetEntityOrder(entityType) {
   return function (state, props) {
-    return state.data.getIn(['entityOrder', entityType, props.key || entityType], _immutable.default.List()) || _immutable.default.List();
+    return state.data.getIn(['entityOrder', entityType, props.key || entityType], _immutable["default"].List()) || _immutable["default"].List();
   };
 };
 
@@ -79,7 +79,7 @@ var createWhereSelector = function createWhereSelector(entityType) {
 
         return entityValue === value;
       });
-    }, null, _immutable.default.Map());
+    }, null, _immutable["default"].Map());
   });
 };
 
@@ -97,7 +97,7 @@ exports.createEntityOrderSelector = createEntityOrderSelector;
 var createOrderedEntitiesSelector = function createOrderedEntitiesSelector(entityType, entitiesSelector) {
   var getEntityOrder = createGetEntityOrder(entityType);
   return (0, _reselect.createSelector)([entitiesSelector, getEntityOrder], function (entityHash, entityOrder) {
-    return _immutable.default.OrderedMap().withMutations(function (map) {
+    return _immutable["default"].OrderedMap().withMutations(function (map) {
       // eslint-disable-line new-cap
       entityOrder.forEach(function (entityId, index) {
         var entity = entityHash.get(entityId);

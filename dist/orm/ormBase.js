@@ -3,23 +3,21 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = _default;
+exports["default"] = baseBuilder;
 
 var _immutable = require("immutable");
 
 var _reselect = require("reselect");
 
-var _orm = _interopRequireDefault(require("../orm"));
-
 var _ormSelectors = require("./ormSelectors");
 
 var _ormErrors = require("./ormErrors");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -39,7 +37,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _default(recordProps, _recordType) {
+function recordWrapper(config, recordProps, _recordType) {
   var EMPTY_PREDICATE = Object.freeze({});
   var builtIns = ['recordType', 'valid', 'updateProps', 'destroy', 'onCreate', 'onUpdate', 'onDestroy'];
 
@@ -112,12 +110,12 @@ function _default(recordProps, _recordType) {
     }], [{
       key: "database",
       value: function database() {
-        return _orm.default.Config.database.getState();
+        return config.database.getState();
       }
     }, {
       key: "dispatch",
       value: function dispatch() {
-        return _orm.default.Config.database.dispatch;
+        return config.database.dispatch;
       }
     }, {
       key: "recordType",
@@ -178,4 +176,8 @@ function _default(recordProps, _recordType) {
   }((0, _immutable.Record)(recordProps));
 
   return ORMBase;
+}
+
+function baseBuilder(config) {
+  return recordWrapper.bind(this, config);
 }
