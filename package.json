@@ -1,6 +1,6 @@
 {
   "name": "@catchandrelease/crorm",
-  "version": "7.1.0",
+  "version": "8.0.0",
   "description": "Catch&Release ORM",
   "main": "dist/orm.js",
   "scripts": {
