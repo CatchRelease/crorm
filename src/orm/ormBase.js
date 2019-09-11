@@ -1,7 +1,6 @@
 import { Record } from 'immutable';
 import { createSelector } from 'reselect';
 
-import ORM from '../orm';
 import {
   createEntitiesSelector,
   createEntityOrderSelector,
@@ -12,7 +11,7 @@ import {
 } from './ormSelectors';
 import { RecordInvalidError } from './ormErrors';
 
-export default function(recordProps, recordType) {
+function recordWrapper(config, recordProps, recordType) {
   const EMPTY_PREDICATE = Object.freeze({});
   const builtIns = ['recordType', 'valid', 'updateProps', 'destroy', 'onCreate', 'onUpdate', 'onDestroy'];
 
@@ -29,11 +28,11 @@ export default function(recordProps, recordType) {
 
   class ORMBase extends Record(recordProps) {
     static database() {
-      return ORM.Config.database.getState();
+      return config.database.getState();
     }
 
     static dispatch() {
-      return ORM.Config.database.dispatch;
+      return config.database.dispatch;
     }
 
     static recordType() {
@@ -102,4 +101,8 @@ export default function(recordProps, recordType) {
   }
 
   return ORMBase;
+}
+
+export default function baseBuilder(config) {
+  return recordWrapper.bind(this, config);
 }
