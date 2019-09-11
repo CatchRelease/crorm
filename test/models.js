@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file */
+
 import ORM from '../src/orm';
 
 export const onCreateSpy = jest.fn().mockReturnValue('finish create');

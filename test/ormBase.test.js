@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file */
+
 import Immutable from 'immutable';
 
 import ORM from '../src/orm';
