@@ -3,6 +3,10 @@
   "version": "8.0.0",
   "description": "Catch&Release ORM",
   "main": "dist/orm.js",
+  "engines": {
+    "node": "10.15.3",
+    "npm": "6.4.1"
+  },
   "scripts": {
     "build": "babel src -d dist && npm run docs",
     "docs": "docco index.jsx",
