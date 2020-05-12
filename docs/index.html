@@ -137,7 +137,7 @@ The second parameter is the recordType and is used to look up your model in the 
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyModel</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ORM</span>.<span class="hljs-title">Base</span>(</span>{
-  id: <span class="hljs-literal">null</span>,
+  <span class="hljs-attr">id</span>: <span class="hljs-literal">null</span>,
   <span class="hljs-attr">myAttribute1</span>: <span class="hljs-literal">null</span>,
   <span class="hljs-attr">myAttribute2</span>: <span class="hljs-literal">null</span>
 }, <span class="hljs-string">'myModel'</span>) {</pre></div></div>
@@ -296,7 +296,7 @@ as well as calling the <code>onUpdate</code> action to do any backend processing
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        &lt;a onClick={() =&gt; { model.updateProps({ attribute2: 'hasNewValue' }) }}&gt;{model.attribute1}&lt;/a&gt;
+            <div class="content"><div class='highlight'><pre>        &lt;a onClick={() =&gt; { model.updateProps({ <span class="hljs-attr">attribute2</span>: <span class="hljs-string">'hasNewValue'</span> }) }}&gt;{model.attribute1}&lt;/a&gt;
       )
     );
   }
