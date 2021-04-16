@@ -77,5 +77,4 @@ const finalReducer = combineReducers({
   }
 });
 
-
 export const store = createStore(finalReducer);
