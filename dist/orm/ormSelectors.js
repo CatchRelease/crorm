@@ -3,11 +3,13 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.createPaginationSelector = exports.createOrderedEntitiesSelector = exports.createEntityOrderSelector = exports.createWhereSelector = exports.createEntitiesSelector = exports.createEntitySelector = void 0;
+exports.createWhereSelector = exports.createPaginationSelector = exports.createOrderedEntitiesSelector = exports.createEntitySelector = exports.createEntityOrderSelector = exports.createEntitiesSelector = void 0;
 
 var _immutable = _interopRequireDefault(require("immutable"));
 
 var _reselect = require("reselect");
+
+var _excluded = ["key"];
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -17,7 +19,7 @@ function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) r
 
 var getProps = function getProps(state, _ref) {
   var key = _ref.key,
-      rest = _objectWithoutProperties(_ref, ["key"]);
+      rest = _objectWithoutProperties(_ref, _excluded);
 
   return rest;
 };
