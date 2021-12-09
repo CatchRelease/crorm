@@ -181,7 +181,7 @@ describe('ORMBase', () => {
         test('returns the updated record', () => {
           const record = new Base();
 
-          return expect(record.onDestroy()).resolves.toBe(record.clear());
+          return expect(record.onDestroy()).resolves.toStrictEqual(record.clear());
         });
       });
     });
